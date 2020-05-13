@@ -1,0 +1,4712 @@
+
+Python requests.get() Examples
+
+Example 1
+def resolve_reference_http(cls, design_uri):
+        """Retrieve design documents from http/https endpoints.
+
+        Return a byte array of the response content. Support unsecured or
+        basic auth
+
+        :param design_uri: Tuple as returned by urllib.parse for the design reference
+        """
+        if design_uri.username is not None and design_uri.password is not None:
+            response = requests.get(
+                design_uri.geturl(),
+                auth=(design_uri.username, design_uri.password),
+                timeout=get_client_timeouts())
+        else:
+            response = requests.get(
+                design_uri.geturl(), timeout=get_client_timeouts())
+
+        return response.content 
+****************************************************************************************************
+
+
+Python requests.post() Examples
+
+Example 1
+def getTicket():
+    # put the ip address or dns of your apic-em controller in this url
+    url = "https://" + controller + "/api/v1/ticket"
+
+    #the username and password to access the APIC-EM Controller
+    payload = {"username":"usernae","password":"password"}
+
+    #Content type must be included in the header
+    header = {"content-type": "application/json"}
+
+    #Performs a POST on the specified url to get the service ticket
+    response= requests.post(url,data=json.dumps(payload), headers=header, verify=False)
+
+    #convert response to json format
+    r_json=response.json()
+
+    #parse the json to get the service ticket
+    ticket = r_json["response"]["serviceTicket"]
+
+    return ticket 
+****************************************************************************************************
+
+
+Python requests.Session() Examples
+
+Example 1
+def requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session 
+****************************************************************************************************
+
+
+Python requests.put() Examples
+
+Example 1
+def _send_raw_http_request(self, method, url, data=None):
+        self.__logger.debug('%s %s' % (method, url))
+        if method in ['POST', 'PUT', 'PATCH']:
+            self.__logger.log(TINTRI_LOG_LEVEL_DATA, 'Data: %s' % data)
+
+        headers = {'content-type': 'application/json'}
+        if self.__session_id:
+            headers['cookie'] = 'JSESSIONID=%s' % self.__session_id
+
+        if method in ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']:
+            if method == 'GET': httpresp = requests.get(url, headers=headers, verify=False)
+            elif method == 'POST': httpresp = requests.post(url, data, headers=headers, verify=False)
+            elif method == 'PUT': httpresp = requests.put(url, data, headers=headers, verify=False)
+            elif method == 'PATCH': httpresp = requests.patch(url, data, headers=headers, verify=False)
+            elif method == 'DELETE': httpresp = requests.delete(url, headers=headers, verify=False)
+            self._httpresp = httpresp # self._httpresp is for debugging only, not thread-safe
+            return httpresp
+        else:
+            raise TintriError(None, message='Invalid HTTP method: ' + method) # This should never happen 
+****************************************************************************************************
+
+
+Python requests.session() Examples
+
+Example 1
+def __init__(self, username, password):
+        self.session = requests.session()
+        self.session.proxies = urllib.getproxies()
+        self.username = username
+        self.password = password
+        self.headers = {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "Accept-Language": "en;q=1, fr;q=0.9, de;q=0.8, ja;q=0.7, nl;q=0.6, it;q=0.5",
+            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+            "X-Robinhood-API-Version": "1.0.0",
+            "Connection": "keep-alive",
+            "User-Agent": "Robinhood/823 (iPhone; iOS 7.1.2; Scale/2.00)"
+        }
+        self.session.headers = self.headers
+        self.login() 
+****************************************************************************************************
+
+
+Python requests.delete() Examples
+
+Example 1
+def _send_raw_http_request(self, method, url, data=None):
+        self.__logger.debug('%s %s' % (method, url))
+        if method in ['POST', 'PUT', 'PATCH']:
+            self.__logger.log(TINTRI_LOG_LEVEL_DATA, 'Data: %s' % data)
+
+        headers = {'content-type': 'application/json'}
+        if self.__session_id:
+            headers['cookie'] = 'JSESSIONID=%s' % self.__session_id
+
+        if method in ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']:
+            if method == 'GET': httpresp = requests.get(url, headers=headers, verify=False)
+            elif method == 'POST': httpresp = requests.post(url, data, headers=headers, verify=False)
+            elif method == 'PUT': httpresp = requests.put(url, data, headers=headers, verify=False)
+            elif method == 'PATCH': httpresp = requests.patch(url, data, headers=headers, verify=False)
+            elif method == 'DELETE': httpresp = requests.delete(url, headers=headers, verify=False)
+            self._httpresp = httpresp # self._httpresp is for debugging only, not thread-safe
+            return httpresp
+        else:
+            raise TintriError(None, message='Invalid HTTP method: ' + method) # This should never happen 
+****************************************************************************************************
+
+
+Python requests.request() Examples
+
+Example 1
+def get_aws_access_key(turbot_api_access_key, turbot_api_secret_key, turbot_host_certificate_verification, turbot_host, turbot_account, turbot_user_id, api_version):
+    """ Gets the federated access keys for a specified account
+
+    :return: Returns the access key, secret key and session token for an account"""
+    api_method = "POST"
+    api_url = "/api/%s/accounts/%s/users/%s/awsCredentials" % (api_version, turbot_account, turbot_user_id)
+    response = requests.request(
+        api_method,
+        urllib.parse.urljoin(turbot_host, api_url),
+        auth=(turbot_api_access_key, turbot_api_secret_key),
+        verify=turbot_host_certificate_verification,
+        headers={
+            'content-type': "application/json",
+            'cache-control': "no-cache"
+        }
+    )
+
+    responseObj = json.loads(response.text)
+
+    akey = responseObj['accessKeyId']
+    skey = responseObj['secretAccessKey']
+    token = responseObj['sessionToken']
+
+    return (akey, skey, token) 
+****************************************************************************************************
+
+
+Python requests.ConnectionError() Examples
+
+Example 1
+def sendData():
+    global projectName
+    global userInsightfinder
+    global licenseKey
+    alldata["userName"] = userInsightfinder
+    alldata["operation"] = "verify"
+    alldata["licenseKey"] = licenseKey
+    alldata["projectName"] = projectName
+    json_data = json.dumps(alldata)
+    #print json_data
+    url = serverUrl + "/api/v1/agentdatahelper"
+    print serverUrl
+    try:
+        response = requests.post(url, data = json.loads(json_data))
+    except requests.ConnectionError, e:
+        print "Connection failure : " + str(e)
+        print "Verification with InsightFinder credentials Failed"
+        sys.exit(1) 
+****************************************************************************************************
+
+
+Python requests.exceptions() Examples
+
+Example 1
+def _must_post(self, api, data=None, json=None, timeout=10, **kwargs):
+        if data is not None:
+            kwargs['data'] = data
+        elif json is not None:
+            kwargs['json'] = json
+        else:
+            kwargs['data'] = {}
+        kwargs['timeout'] = timeout
+
+        try:
+            r = requests.post(api, **kwargs)
+            return r
+        except requests.exceptions.Timeout:
+            logger.error("Timeout requesting Gitter")
+        except KeyboardInterrupt:
+            raise
+        except:
+            logger.exception("Unknown error requesting Gitter")
+        return None 
+****************************************************************************************************
+
+
+Python requests.Response() Examples
+
+Example 1
+def get(self, route, query=None, timeout=None):
+        """
+        Send a GET request to Promenade.
+
+        :param string route: The URL string following the hostname and API prefix
+        :param dict query: A dict of k, v pairs to add to the query string
+        :param timeout: A single or tuple value for connect, read timeout.
+            A single value indicates the read timeout only
+        :return: A requests.Response object
+        """
+        auth_refresh = False
+        while True:
+            url = self.base_url + route
+            self.logger.debug('GET ' + url)
+            self.logger.debug('Query Params: ' + str(query))
+            resp = self.__session.get(
+                url, params=query, timeout=self._timeout(timeout))
+
+            if resp.status_code == 401 and not auth_refresh:
+                self.set_auth()
+                auth_refresh = True
+            else:
+                break
+
+        return resp 
+****************************************************************************************************
+
+
+Python requests.auth() Examples
+
+Example 1
+def login(self):
+        HEADERS = {
+            'Ubi-AppId': UBI_APP_ID,
+            'Content-Type': 'application/json; charset=UTF-8',
+            'User-Agent': 'Mozilla/5.0',
+            'Ubi-LocaleCode': 'en-US',
+            'Accept-Language': 'en-US,en;q=0.9'
+        }
+        payload = {'rememberMe': 'true'}
+        r = requests.post(LOGIN_URL, headers=HEADERS, auth=HTTPBasicAuth(self.SECRET_USERNAME, self.SECRET_PASSWORD), json=payload)
+        if r.status_code == 200:
+            self.session = json.loads(r.text)
+            f = open('info.txt', 'w')
+            json.dump(r.json(), f)
+            f.close()
+            print('INFO: Created a new session successfully.')
+            self.connected = True
+            return True
+        else:
+            #raise Exception('ERROR: Login request failed:')
+            print(r)
+            print(type(r))
+            pprint.pprint(r.text)
+            self.connected = False
+            return False 
+****************************************************************************************************
+
+
+Python requests.HTTPError() Examples
+
+Example 1
+def get_yahoo_data(self):
+        """
+        Cycles through "yahoo_series"ids" to get data from the Yahoo Finance.
+        """        
+        import time
+        
+        print('\nGetting data from Yahoo Finance...')
+        for series_name in list(self.yahoo_series_ids.keys()):
+            series_data = DataSeries()
+            series_id = self.yahoo_series_ids[series_name]
+            print('\t|--Getting data for {}({}).'.format(series_name, series_id))
+            success = False
+            while success == False:
+                try:
+                    series_data.yahoo_response(series_id)
+                except req.HTTPError:
+                    delay = 5
+                    print('\t --CONNECTION ERROR--',
+                          '\n\t Sleeping for {} seconds.'.format(delay))
+                    time.sleep(delay)
+                else:
+                    success = True
+            self.primary_dictionary_output[series_name] = series_data
+        print('Finished getting data from Yahoo Finance!') 
+****************************************************************************************************
+
+
+Python requests.head() Examples
+
+Example 1
+def _check_bad_blob(self, bad_blob):
+        with self.repo_server_thread({'bad_blob': bad_blob}) as (host, port):
+            # Drive-by test of HEAD requests -- note that this doesn't
+            # detect the error yet, so the next GET "succeeds".
+            req_head = requests.head(f'http://{host}:{port}/bad_blob')
+            req = requests.get(f'http://{host}:{port}/bad_blob')
+            self.assertEqual(req_head.status_code, req.status_code)
+            self.assertEqual(_no_date(req_head.headers), _no_date(req.headers))
+            # You'd think that `requests` would error on this, but, no...
+            # https://blog.petrzemek.net/2018/04/22/
+            #   on-incomplete-http-reads-and-the-requests-library-in-python/
+            self.assertEqual(200, req.status_code)
+            self.assertLess(
+                req.raw.tell(),  # Number of bytes that were read
+                int(req.headers['content-length']),
+            )
+            # Ok, so we didn't get enough bytes, let's retry. This verifies
+            # that the server memoizes integrity errors correctly.
+            req = requests.get(f'http://{host}:{port}/bad_blob')
+            self.assertEqual(500, req.status_code)
+            self.assertIn(b'file_integrity', req.content)
+            return req.content.decode() 
+****************************************************************************************************
+
+
+Python urllib.request.urlopen() Examples
+
+Example 1
+def download_comments_terms(username, password):
+    userpass = '%s:%s' % (username, password)
+    auth_encoded = base64.encodebytes(userpass.encode('ascii'))[:-1]
+
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    req = Request(TERM_API_COMMENTS)
+    req.add_header('Authorization', 'Basic %s' %  str(auth_encoded, 'utf-8'))
+
+    response = urlopen(req, context=ctx)
+    str_response = response.read().decode('utf-8')
+    j = json.loads(str_response)
+
+    return {str(script(_t["IEML"]["value"])) : {
+                            "comment": _t["commentaire_sur_terme"],
+                            "drupal_nid": _t["Nid"]
+    } for _t in j} 
+****************************************************************************************************
+
+
+Python urllib.request.Request() Examples
+
+Example 1
+def download_comments_terms(username, password):
+    userpass = '%s:%s' % (username, password)
+    auth_encoded = base64.encodebytes(userpass.encode('ascii'))[:-1]
+
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    req = Request(TERM_API_COMMENTS)
+    req.add_header('Authorization', 'Basic %s' %  str(auth_encoded, 'utf-8'))
+
+    response = urlopen(req, context=ctx)
+    str_response = response.read().decode('utf-8')
+    j = json.loads(str_response)
+
+    return {str(script(_t["IEML"]["value"])) : {
+                            "comment": _t["commentaire_sur_terme"],
+                            "drupal_nid": _t["Nid"]
+    } for _t in j} 
+****************************************************************************************************
+
+
+Python urllib.request.build_opener() Examples
+
+Example 1
+def __init__(self):
+        self.articles = []
+        self.query = None
+        self.cjar = MozillaCookieJar()
+
+        # If we have a cookie file, load it:
+        if ScholarConf.COOKIE_JAR_FILE and \
+           os.path.exists(ScholarConf.COOKIE_JAR_FILE):
+            try:
+                self.cjar.load(ScholarConf.COOKIE_JAR_FILE,
+                               ignore_discard=True)
+                ScholarUtils.log('info', 'loaded cookies file')
+            except Exception as msg:
+                ScholarUtils.log('warn', 'could not load cookies file: %s' % msg)
+                self.cjar = MozillaCookieJar() # Just to be safe
+
+        self.opener = build_opener(HTTPCookieProcessor(self.cjar))
+        self.settings = None # Last settings object, if any 
+****************************************************************************************************
+
+
+Python urllib.request.urlretrieve() Examples
+
+Example 1
+def check_or_download_inception(inception_path):
+    ''' Checks if the path to the inception file is valid, or downloads
+        the file if it is not present. '''
+    INCEPTION_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
+    if inception_path is None:
+        inception_path = '/tmp'
+    inception_path = pathlib.Path(inception_path)
+    model_file = inception_path / 'classify_image_graph_def.pb'
+    if not model_file.exists():
+        print("Downloading Inception model")
+        from urllib import request
+        import tarfile
+        fn, _ = request.urlretrieve(INCEPTION_URL)
+        with tarfile.open(fn, mode='r') as f:
+            f.extract('classify_image_graph_def.pb', str(model_file.parent))
+    return str(model_file) 
+****************************************************************************************************
+
+
+Python urllib.request.parse_http_list() Examples
+
+Example 1
+def parse_list_header(value):
+    """Parse lists as described by RFC 2068 Section 2.
+
+    In particular, parse comma-separated lists where the elements of
+    the list may include quoted-strings.  A quoted-string could
+    contain a comma.  A non-quoted string could have quotes in the
+    middle.  Quotes are removed automatically after parsing.
+
+    The return value is a standard :class:`list`:
+
+    >>> parse_list_header('token, "quoted value"')
+    ['token', 'quoted value']
+
+    :param value: a string with a list header.
+    :return: :class:`list`
+    """
+    result = []
+    for item in urllib2.parse_http_list(value):
+        if item[:1] == item[-1:] == '"':
+            item = unquote_header_value(item[1:-1])
+        result.append(item)
+    return result 
+****************************************************************************************************
+
+
+Python urllib.request.HTTPError() Examples
+
+Example 1
+def test_wrong_exception_order(self):
+        tmp = self.mkdtemp()
+        path = os.path.join(tmp, 'xxx')
+        self.write_file(path)
+        dist_files = [('xxx', '2.6', path)]  # command, pyversion, filename
+        self.write_file(self.rc, PYPIRC_LONG_PASSWORD)
+
+        pkg_dir, dist = self.create_dist(dist_files=dist_files)
+        tests = [
+            (OSError('oserror'), 'oserror', OSError),
+            (HTTPError('url', 400, 'httperror', {}, None),
+             'Upload failed (400): httperror', DistutilsError),
+        ]
+        for exception, expected, raised_exception in tests:
+            with self.subTest(exception=type(exception).__name__):
+                with mock.patch('distutils.command.upload.urlopen',
+                                new=mock.Mock(side_effect=exception)):
+                    with self.assertRaises(raised_exception):
+                        cmd = upload(dist)
+                        cmd.ensure_finalized()
+                        cmd.run()
+                    results = self.get_logs(ERROR)
+                    self.assertIn(expected, results[-1])
+                    self.clear_logs() 
+****************************************************************************************************
+
+
+Python urllib.request.URLError() Examples
+
+Example 1
+def _get_link(self, link):
+        """Return the HTML content of url page as a string """
+        try:
+            logging.debug("Trying to open " + link)
+            res = self.session.open(link)
+        except request.URLError as errno:
+            print("Connection Error: {}".format(errno.reason))
+            return ""
+
+        charset = 'utf-8'
+        info = res.info()
+        try:
+            _, charset = info['Content-Type'].split('charset=')
+        except:
+            pass
+        data = res.read()
+        data = data.decode(charset, 'replace')
+
+        data = htmlentitydecode(data)
+        return data 
+****************************************************************************************************
+
+
+Python urllib.request.request() Examples
+
+Example 1
+def post_data_to_es(payload, region, creds, host, path, method='POST', proto='https://'):
+        '''Post data to ES endpoint with SigV4 signed http headers'''
+        """
+        Low-level POST data to Amazon Elasticsearch Service generating a Sigv4 signed request
+
+        :param payload:
+        :param region:
+        :param creds:
+        :param host:
+        :param path:
+        :param method:
+        :param proto:
+        :return:
+        """
+        req = AWSRequest(method=method,
+                         url=proto + host + urllib.quote(path),
+                         data=payload,
+                         headers={'Host': host})
+        SigV4Auth(creds, 'es', region).add_auth(req)
+        http_session = BotocoreHTTPSession()
+        res = http_session.send(req.prepare())
+        if 200 <= res.status_code <= 299:
+            return res._content
+        else:
+            raise ESException(res.status_code, res._content) 
+****************************************************************************************************
+
+
+Python urllib.request.HTTPSHandler() Examples
+
+Example 1
+def get_access_token(self, code, state=None):
+        '''
+        In callback url: http://host/callback?code=123&state=xyz
+        use code and state to get an access token.
+        '''
+        kw = dict(client_id=self._client_id, client_secret=self._client_secret, code=code)
+        if self._redirect_uri:
+            kw['redirect_uri'] = self._redirect_uri
+        if state:
+            kw['state'] = state
+        opener = build_opener(HTTPSHandler)
+        request = Request('https://github.com/login/oauth/access_token', data=_encode_params(kw))
+        request.get_method = _METHOD_MAP['POST']
+        request.add_header('Accept', 'application/json')
+        try:
+            response = opener.open(request, timeout=TIMEOUT)
+            r = _parse_json(response.read())
+            if 'error' in r:
+                raise ApiAuthError(str(r.error))
+            return str(r.access_token)
+        except HTTPError as e:
+            raise ApiAuthError('HTTPError when get access token') 
+****************************************************************************************************
+
+
+Python urllib.request.add_header() Examples
+
+Example 1
+def requestSpotlight(self):
+		#encode spaces
+		sentence = self.sentence.replace(' ','%20')
+
+		#restrict types to person,organistion and location
+		urlTypes = 'types=DBpedia:Person,Schema:Person,DBpedia:Company,DBpedia:Organisation,Schema:Organization,DBpedia:AdministrativeRegion,DBpedia:PopulatedPlace,DBpedia:Place,Schema:Place'
+		url = "http://spotlight.dbpedia.org/rest/candidates?types="+urlTypes+"&text="+sentence
+		
+		request = urllib.request.Request(url)
+		request.add_header('Accept', 'application/json')
+		response = urllib.request.urlopen(request)
+		responseStr = str(response.read().decode('utf-8'))
+
+		# fetch json from the response
+		jsonStr = json.loads(responseStr)
+
+		#Parse json
+		return(self.parseJson(jsonStr))
+
+	# Entry point of the class 
+****************************************************************************************************
+
+
+Python urllib.request.HTTPCookieProcessor() Examples
+
+Example 1
+def __init__(self, proxy=None):
+        global USER_AGENT
+        self.redirh = HTTPRedirectHandler()
+        self.cookie = HTTPCookieProcessor()
+        self.rawopen = build_opener(self.redirh, self.cookie)
+        if proxy is None or self.no_proxy:
+            self.opener = self.rawopen
+        elif proxy == 'auto':
+            # proxy.uku.im:8888
+            #self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
+            #self.proxyh = ProxyHandler({'http': "proxy.uku.im:8888"})
+            self.proxyh = ProxyHandler({'http': "https://secure.uku.im:8443"})
+            #self.proxyh = ProxyHandler({'http': "https://proxy.uku.im:443"})
+            self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
+        else:
+            self.proxyh = ProxyHandler(proxy)
+            self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
+        self.extra_headers = {"User-Agent": USER_AGENT} 
+****************************************************************************************************
+
+
+Python urllib.request.getproxies() Examples
+
+Example 1
+def _make_pool(
+        self,
+        parsed_dsn,  # type: Dsn
+        http_proxy,  # type: Optional[str]
+        https_proxy,  # type: Optional[str]
+        ca_certs,  # type: Optional[Any]
+    ):
+        # type: (...) -> Union[PoolManager, ProxyManager]
+        proxy = None
+
+        # try HTTPS first
+        if parsed_dsn.scheme == "https" and (https_proxy != ""):
+            proxy = https_proxy or getproxies().get("https")
+
+        # maybe fallback to HTTP proxy
+        if not proxy and (http_proxy != ""):
+            proxy = http_proxy or getproxies().get("http")
+
+        opts = self._get_pool_options(ca_certs)
+
+        if proxy:
+            return urllib3.ProxyManager(proxy, **opts)
+        else:
+            return urllib3.PoolManager(**opts) 
+****************************************************************************************************
+
+
+Python urllib.request.pathname2url() Examples
+
+Example 1
+def normalize_cdmi_url(self, path):
+        """Normalize URL path relative to current path and return.
+
+        :arg path: path relative to current path
+        :returns: absolute CDMI URL
+
+        """
+        # Turn URL path into OS path for manipulation
+        mypath = url2pathname(path)
+        if not os.path.isabs(mypath):
+            mypath = os.path.join(url2pathname(self.pwd()), mypath)
+        # normalize path
+        mypath = os.path.normpath(mypath)
+        if path.endswith(os.path.sep) and not mypath.endswith(os.path.sep):
+            mypath += os.path.sep
+        # if isinstance(mypath, str):
+        #    mypath = mypath.encode('utf8')
+        url = self.cdmi_url + pathname2url(mypath)
+        return url 
+****************************************************************************************************
+
+
+Python urllib.request.HTTPHandler() Examples
+
+Example 1
+def send_signal(event, response_status, reason, response_data=None):
+    response_body = json.dumps(
+        {
+            'Status': response_status,
+            'Reason': str(reason or 'ReasonCanNotBeNone'),
+            'PhysicalResourceId': event.get('PhysicalResourceId', event['LogicalResourceId']),
+            'StackId': event['StackId'],
+            'RequestId': event['RequestId'],
+            'LogicalResourceId': event['LogicalResourceId'],
+            'Data': response_data or {}
+        },
+        sort_keys=True,
+    )
+    logging.debug(response_body)
+    opener = build_opener(HTTPHandler)
+    request = Request(event['ResponseURL'], data=response_body)
+    request.add_header('Content-Type', '')
+    request.add_header('Content-Length', len(response_body))
+    request.get_method = lambda: 'PUT'
+    opener.open(request) 
+****************************************************************************************************
+
+
+Python urllib.request.install_opener() Examples
+
+Example 1
+def IH_linkme_ufanet(url):
+    """Функция для заливки изображений на локальный хостинг - linkme.ufanet.ru.
+       Вход  : ссылка на изображение
+       Выход : ссылку на изображение на выбраном хостинге изображений"""
+
+    # Включим печеньки
+    cookie = http.cookiejar.CookieJar()
+    request.install_opener(request.build_opener(request.HTTPCookieProcessor(cookie)))
+
+    # Добавим заголовки
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:16.0) Gecko/20100101 Firefox/16.0'}
+
+    # Установка логина-пароля. Логин-пароль задаются в config.py
+    params = parse.urlencode({'user': linkme_user, 'pass': linkme_pass})
+    bin_params = params.encode('utf-8')
+
+    # Запрос для получения печенег
+    linkme_url = 'http://passport.ufanet.ru/enter/?a=a%3A2%3A%7Bs%3A6%3A%22backto%22%3Bs%3A29%3A%22http%3A%2F%2Flinkme.ufanet.ru%2Fenter%22%3Bs%3A3%3A%22xml%22%3Bb%3A1%3B%7D'
+    req = request.Request(linkme_url, bin_params, headers)
+    request.urlopen(req)
+
+    # Получим Content-Type и байтовый объект
+    content_type, body = MultipartFormdataEncoder(url, 'Filedata')
+
+    # Добавим заголовки
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:16.0) Gecko/20100101 Firefox/16.0',
+               'Content-Type': content_type}
+
+    # Заливка изображения на хостинг
+    req = request.Request('http://linkme.ufanet.ru/image/upload/0', body, headers)
+    f3 = request.urlopen(req)
+
+    # Сервер возвращает ответ в формате json.
+    json_dict = json.loads(f3.read().decode('utf-8'))
+
+    # Удвление ненужного изображения
+    os.remove(url)
+
+    return json_dict['fullLink'].replace('/images/', '/box/400x500/') 
+****************************************************************************************************
+
+
+Python urllib.request.proxy_bypass_environment() Examples
+
+Example 1
+def test_getproxies_environment_keep_no_proxies(self):
+        self.env.set('NO_PROXY', 'localhost')
+        proxies = urllib_request.getproxies_environment()
+        # getproxies_environment use lowered case truncated (no '_proxy') keys
+        self.assertEqual('localhost', proxies['no'])
+        # List of no_proxies with space.
+        self.env.set('NO_PROXY', 'localhost, anotherdomain.com, newdomain.com')
+        self.assertTrue(urllib_request.proxy_bypass_environment('anotherdomain.com')) 
+****************************************************************************************************
+
+
+Python urllib.request.getproxies_environment() Examples
+
+Example 1
+def test_getproxies_environment_keep_no_proxies(self):
+        self.env.set('NO_PROXY', 'localhost')
+        proxies = urllib_request.getproxies_environment()
+        # getproxies_environment use lowered case truncated (no '_proxy') keys
+        self.assertEqual('localhost', proxies['no'])
+        # List of no_proxies with space.
+        self.env.set('NO_PROXY', 'localhost, anotherdomain.com, newdomain.com')
+        self.assertTrue(urllib_request.proxy_bypass_environment('anotherdomain.com')) 
+****************************************************************************************************
+
+
+Python urllib.request.ProxyHandler() Examples
+
+Example 1
+def __init__(self, proxy=None):
+        global USER_AGENT
+        self.redirh = HTTPRedirectHandler()
+        self.cookie = HTTPCookieProcessor()
+        self.rawopen = build_opener(self.redirh, self.cookie)
+        if proxy is None or self.no_proxy:
+            self.opener = self.rawopen
+        elif proxy == 'auto':
+            # proxy.uku.im:8888
+            #self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
+            #self.proxyh = ProxyHandler({'http': "proxy.uku.im:8888"})
+            self.proxyh = ProxyHandler({'http': "https://secure.uku.im:8443"})
+            #self.proxyh = ProxyHandler({'http': "https://proxy.uku.im:443"})
+            self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
+        else:
+            self.proxyh = ProxyHandler(proxy)
+            self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
+        self.extra_headers = {"User-Agent": USER_AGENT} 
+****************************************************************************************************
+
+
+Python urllib.request.quote() Examples
+
+Example 1
+def post_data_to_es(payload, region, creds, host, path, method='POST', proto='https://'):
+        '''Post data to ES endpoint with SigV4 signed http headers'''
+        """
+        Low-level POST data to Amazon Elasticsearch Service generating a Sigv4 signed request
+
+        :param payload:
+        :param region:
+        :param creds:
+        :param host:
+        :param path:
+        :param method:
+        :param proto:
+        :return:
+        """
+        req = AWSRequest(method=method,
+                         url=proto + host + urllib.quote(path),
+                         data=payload,
+                         headers={'Host': host})
+        SigV4Auth(creds, 'es', region).add_auth(req)
+        http_session = BotocoreHTTPSession()
+        res = http_session.send(req.prepare())
+        if 200 <= res.status_code <= 299:
+            return res._content
+        else:
+            raise ESException(res.status_code, res._content) 
+****************************************************************************************************
+
+
+Python urllib.request.data() Examples
+
+Example 1
+def urlopen(url, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT, **_3to2kwargs):
+    if 'cadefault' in _3to2kwargs: cadefault = _3to2kwargs['cadefault']; del _3to2kwargs['cadefault']
+    else: cadefault = False
+    if 'capath' in _3to2kwargs: capath = _3to2kwargs['capath']; del _3to2kwargs['capath']
+    else: capath = None
+    if 'cafile' in _3to2kwargs: cafile = _3to2kwargs['cafile']; del _3to2kwargs['cafile']
+    else: cafile = None
+    global _opener
+    if cafile or capath or cadefault:
+        if not _have_ssl:
+            raise ValueError('SSL support not available')
+        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        context.options |= ssl.OP_NO_SSLv2
+        context.verify_mode = ssl.CERT_REQUIRED
+        if cafile or capath:
+            context.load_verify_locations(cafile, capath)
+        else:
+            context.set_default_verify_paths()
+        https_handler = HTTPSHandler(context=context, check_hostname=True)
+        opener = build_opener(https_handler)
+    elif _opener is None:
+        _opener = opener = build_opener()
+    else:
+        opener = _opener
+    return opener.open(url, data, timeout) 
+****************************************************************************************************
+
+
+Python urllib.request.HTTPBasicAuthHandler() Examples
+
+Example 1
+def getFile(cls, getfile, unpack=True):
+        if cls.getProxy():
+            proxy = req.ProxyHandler({'http': cls.getProxy(), 'https': cls.getProxy()})
+            auth = req.HTTPBasicAuthHandler()
+            opener = req.build_opener(proxy, auth, req.HTTPHandler)
+            req.install_opener(opener)
+        if cls.ignoreCerts():
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            opener = req.build_opener(urllib.request.HTTPSHandler(context=ctx))
+            req.install_opener(opener)
+
+        response = req.urlopen(getfile)
+        data = response
+        # TODO: if data == text/plain; charset=utf-8, read and decode
+        if unpack:
+            if   'gzip' in response.info().get('Content-Type'):
+                buf = BytesIO(response.read())
+                data = gzip.GzipFile(fileobj=buf)
+            elif 'bzip2' in response.info().get('Content-Type'):
+                data = BytesIO(bz2.decompress(response.read()))
+            elif 'zip' in response.info().get('Content-Type'):
+                fzip = zipfile.ZipFile(BytesIO(response.read()), 'r')
+                if len(fzip.namelist())>0:
+                    data=BytesIO(fzip.read(fzip.namelist()[0]))
+        return (data, response)
+
+
+    # Feeds 
+****************************************************************************************************
+
+
+Python urllib.request.HTTPPasswordMgrWithDefaultRealm() Examples
+
+Example 1
+def __init__(self, username, password,  #pylint: disable=E1002
+                 verbose=0, use_datetime=False, https_handler=None):
+        """Initialize"""
+        if PY2:
+            Transport.__init__(self, use_datetime=False)
+        else:
+            super().__init__(use_datetime=False)
+        self._username = username
+        self._password = password
+        self._use_datetime = use_datetime
+        self.verbose = verbose
+        self._username = username
+        self._password = password
+
+        self._handlers = []
+
+        if self._username and self._password:
+            self._passmgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+            self._auth_handler = urllib2.HTTPDigestAuthHandler(self._passmgr)
+        else:
+            self._auth_handler = None
+            self._passmgr = None
+
+        if https_handler:
+            self._handlers.append(https_handler)
+            self._scheme = 'https'
+        else:
+            self._scheme = 'http'
+
+        if self._auth_handler:
+            self._handlers.append(self._auth_handler) 
+****************************************************************************************************
+
+
+Python urllib.request.FancyURLopener() Examples
+
+Example 1
+def urlopen(url, data=None, proxies=None):
+    """urlopen(url [, data]) -> open file-like object"""
+    global _urlopener
+    if proxies is not None:
+        opener = urllib_request.FancyURLopener(proxies=proxies)
+    elif not _urlopener:
+        with support.check_warnings(
+                ('FancyURLopener style of invoking requests is deprecated.',
+                DeprecationWarning)):
+            opener = urllib_request.FancyURLopener()
+        _urlopener = opener
+    else:
+        opener = _urlopener
+    if data is None:
+        return opener.open(url)
+    else:
+        return opener.open(url, data) 
+****************************************************************************************************
+
+
+Python urllib.request.full_url() Examples
+
+Example 1
+def request_host(request):
+
+    """Return request-host, as defined by RFC 2965.
+
+    Variation from RFC: returned value is lowercased, for convenient
+    comparison.
+
+    """
+    url = request.full_url
+    host = urlparse(url)[1]
+    if host == "":
+        host = request.get_header("Host", "")
+
+    # remove port, if present
+    host = _cut_port_re.sub("", host, 1)
+    return host.lower() 
+****************************************************************************************************
+
+
+Python urllib.request.get_header() Examples
+
+Example 1
+def request_host(request):
+
+    """Return request-host, as defined by RFC 2965.
+
+    Variation from RFC: returned value is lowercased, for convenient
+    comparison.
+
+    """
+    url = request.full_url
+    host = urlparse(url)[1]
+    if host == "":
+        host = request.get_header("Host", "")
+
+    # remove port, if present
+    host = _cut_port_re.sub("", host, 1)
+    return host.lower() 
+****************************************************************************************************
+
+
+Python urllib.request.has_header() Examples
+
+Example 1
+def has_header(self, header_name):
+        return (header_name in self.headers or
+                header_name in self.unredirected_hdrs) 
+****************************************************************************************************
+
+
+Python urllib.request.method() Examples
+
+Example 1
+def setUp(self):
+        # Create a list of temporary files. Each item in the list is a file
+        # name (absolute path or relative to the current working directory).
+        # All files in this list will be deleted in the tearDown method. Note,
+        # this only helps to makes sure temporary files get deleted, but it
+        # does nothing about trying to close files that may still be open. It
+        # is the responsibility of the developer to properly close files even
+        # when exceptional conditions occur.
+        self.tempFiles = []
+
+        # Create a temporary file.
+        self.registerFileForCleanUp(support.TESTFN)
+        self.text = b'testing urllib.urlretrieve'
+        try:
+            FILE = open(support.TESTFN, 'wb')
+            FILE.write(self.text)
+            FILE.close()
+        finally:
+            try: FILE.close()
+            except: pass 
+****************************************************************************************************
+
+
+Python urllib.request.host() Examples
+
+Example 1
+def request_host(request):
+
+    """Return request-host, as defined by RFC 2965.
+
+    Variation from RFC: returned value is lowercased, for convenient
+    comparison.
+
+    """
+    url = request.full_url
+    host = urlparse(url)[1]
+    if host == "":
+        host = request.get_header("Host", "")
+
+    # remove port, if present
+    host = _cut_port_re.sub("", host, 1)
+    return host.lower() 
+****************************************************************************************************
+
+
+Python urllib.request.add_unredirected_header() Examples
+
+Example 1
+def add_unredirected_header(self, key, val):
+        # will not be added to a redirected request
+        self.unredirected_hdrs[key.capitalize()] = val 
+****************************************************************************************************
+
+
+Python urllib.request.has_proxy() Examples
+
+Example 1
+def has_proxy(self):
+        return self.selector == self.full_url 
+****************************************************************************************************
+
+
+Python urllib.request.selector() Examples
+
+Example 1
+def retry_proxy_http_basic_auth(self, url, realm, data=None):
+        host, selector = splithost(url)
+        newurl = 'http://' + host + selector
+        proxy = self.proxies['http']
+        urltype, proxyhost = splittype(proxy)
+        proxyhost, proxyselector = splithost(proxyhost)
+        i = proxyhost.find('@') + 1
+        proxyhost = proxyhost[i:]
+        user, passwd = self.get_user_passwd(proxyhost, realm, i)
+        if not (user or passwd): return None
+        proxyhost = "%s:%[email protected]%s" % (quote(user, safe=''),
+                                  quote(passwd, safe=''), proxyhost)
+        self.proxies['http'] = 'http://' + proxyhost + proxyselector
+        if data is None:
+            return self.open(newurl)
+        else:
+            return self.open(newurl, data) 
+****************************************************************************************************
+
+
+Python urllib.request.BaseHandler() Examples
+
+Example 1
+def test_init_opener(self):
+        # Opener
+        opener = build_opener(BaseHandler)
+        odoo = odoorpc.ODOO(
+            self.env['host'], self.env['protocol'], self.env['port'],
+            opener=opener)
+        connector = odoo._connector
+        self.assertIs(connector._opener, opener)
+        self.assertIs(connector._proxy_http._opener, opener)
+        self.assertIs(connector._proxy_json._opener, opener) 
+****************************************************************************************************
+
+
+Python urllib.request.parse() Examples
+
+Example 1
+def dumb_css_parser(data):
+    """returns a hash of css selectors, each of which contains a hash of css attributes"""
+    # remove @import sentences
+    data += ';'
+    importIndex = data.find('@import')
+    while importIndex != -1:
+        data = data[0:importIndex] + data[data.find(';', importIndex) + 1:]
+        importIndex = data.find('@import')
+
+    # parse the css. reverted from dictionary compehension in order to support older pythons
+    elements =  [x.split('{') for x in data.split('}') if '{' in x.strip()]
+    try:
+        elements = dict([(a.strip(), dumb_property_dict(b)) for a, b in elements])
+    except ValueError:
+        elements = {} # not that important
+
+    return elements 
+****************************************************************************************************
+
+
+Python urllib.request.url2pathname() Examples
+
+Example 1
+def normalize_cdmi_url(self, path):
+        """Normalize URL path relative to current path and return.
+
+        :arg path: path relative to current path
+        :returns: absolute CDMI URL
+
+        """
+        # Turn URL path into OS path for manipulation
+        mypath = url2pathname(path)
+        if not os.path.isabs(mypath):
+            mypath = os.path.join(url2pathname(self.pwd()), mypath)
+        # normalize path
+        mypath = os.path.normpath(mypath)
+        if path.endswith(os.path.sep) and not mypath.endswith(os.path.sep):
+            mypath += os.path.sep
+        # if isinstance(mypath, str):
+        #    mypath = mypath.encode('utf8')
+        url = self.cdmi_url + pathname2url(mypath)
+        return url 
+****************************************************************************************************
+
+
+Python requests.exceptions.ConnectionError() Examples
+
+Example 1
+def update_on_device(self):
+        params = self.changes.api_params()
+        resource = self.client.api.tm.sys.httpd.load()
+
+        try:
+            resource.modify(**params)
+            return True
+        except ConnectionError as ex:
+            pass
+
+        # BIG-IP will kill your management connection when you change the HTTP
+        # redirect setting. So this catches that and handles it gracefully.
+        if 'Connection aborted' in str(ex) and 'redirectHttpToHttps' in params:
+            # Wait for BIG-IP web server to settle after changing this
+            time.sleep(2)
+            return True
+        raise F5ModuleError(str(ex)) 
+****************************************************************************************************
+
+
+Python requests.exceptions.HTTPError() Examples
+
+Example 1
+def get_conversation(thread_id):
+    logger.info('Retrieving conversation thread', thread_id=thread_id)
+
+    headers = _create_get_conversation_headers()
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
+
+    with _get_session() as session:
+        response = session.get(url, headers=headers)
+        try:
+            response.raise_for_status()
+        except HTTPError as exception:
+            if exception.response.status_code == 403:
+                raise IncorrectAccountAccessError(message='Access not granted for thread', thread_id=thread_id)
+            else:
+                logger.error('Thread retrieval failed', thread_id=thread_id)
+                raise ApiError(response)
+
+    logger.info('Successfully retrieved conversation thread', thread_id=thread_id)
+
+    try:
+        return response.json()
+    except JSONDecodeError:
+        logger.error('The thread response could not be decoded', thread_id=thread_id)
+        raise ApiError(response) 
+****************************************************************************************************
+
+
+Python requests.exceptions.RequestException() Examples
+
+Example 1
+def __processor_s(self, structure):
+        with StringIO() as f:
+            with MRVWrite(f) as w:
+                w.write(structure)
+            data = dict(structure=f.getvalue(), parameters='mrv',
+                        filterChain=[dict(filter='standardizer',
+                                          parameters=dict(standardizerDefinition=self.rules))])
+        try:
+            q = post(f'{CHEMAXON_REST}/rest-v0/util/calculate/molExport', json=data, timeout=20)
+        except RequestException as e:
+            raise ConfigurationError from e
+
+        if q.status_code not in (201, 200):
+            raise ValueError('invalid data')
+
+        res = q.json()
+        if not res:
+            raise ValueError('invalid data')
+
+        with BytesIO(res['structure'].encode()) as f, MRVRead(f) as r:
+            return r.read() 
+****************************************************************************************************
+
+
+Python requests.exceptions.Timeout() Examples
+
+Example 1
+def get_cids(self, cas):
+        """
+        Use the PubChem API to get the CID
+        :param cas: string - CAS identifier
+        :return: list of CIDs
+        """
+        uri = "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/%s/cids/json" \
+              "?email=%s"
+
+        try:
+            response = get((uri % (cas, app.config['ADMIN_EMAIL']))).json()
+            try:
+                cids = response['IdentifierList']['CID']
+                return cids
+            except KeyError:
+                return None
+
+        except (exceptions.ConnectionError, TimeoutError, exceptions.Timeout,
+                exceptions.ConnectTimeout, exceptions.ReadTimeout) as e:
+            # Error. return the error and the CAS number that this error occured on
+            sys.stderr.write("Error: %s. Occurred on CAS: %s", (e, cas))
+            sys.stderr.flush()
+            sys.stdout.flush() 
+****************************************************************************************************
+
+
+Python requests.exceptions.ReadTimeout() Examples
+
+Example 1
+def delete_user_from_group(self,uname,gid):
+        """
+        将群用户从群中剔除，只有群管理员有权限
+        """
+        uid = ""
+        for user in self.group_members[gid]:
+            if user['NickName'] == uname:
+                uid = user['UserName']
+        if uid == "":
+            return False
+        url = self.base_uri + '/webwxupdatechatroom?fun=delmember&pass_ticket=%s' % self.pass_ticket
+        params ={
+            "DelMemberList": uid,
+            "ChatRoomName": gid,
+            "BaseRequest": self.base_request
+        }
+        headers = {'content-type': 'application/json; charset=UTF-8'}
+        data = json.dumps(params, ensure_ascii=False).encode('utf8')
+        try:
+            r = self.session.post(url, data=data, headers=headers)
+        except (ConnectionError, ReadTimeout):
+            return False
+        dic = r.json()
+        return dic['BaseResponse']['Ret'] == 0 
+****************************************************************************************************
+
+
+Python requests.exceptions.SSLError() Examples
+
+Example 1
+def test_do_api_call_succeeds_after_retrying(self):
+        for exception in [requests_exceptions.ConnectionError,
+                          requests_exceptions.SSLError,
+                          requests_exceptions.Timeout,
+                          requests_exceptions.ConnectTimeout,
+                          requests_exceptions.HTTPError]:
+            with mock.patch('airflow.contrib.hooks.databricks_hook.requests') as mock_requests:
+                with mock.patch.object(self.hook.log, 'error') as mock_errors:
+                    setup_mock_requests(
+                        mock_requests,
+                        exception,
+                        error_count=2,
+                        response_content={'run_id': '1'}
+                    )
+
+                    response = self.hook._do_api_call(SUBMIT_RUN_ENDPOINT, {})
+
+                    self.assertEqual(mock_errors.call_count, 2)
+                    self.assertEqual(response, {'run_id': '1'}) 
+****************************************************************************************************
+
+
+Python requests.exceptions.ConnectTimeout() Examples
+
+Example 1
+def test_timeout(self):
+        from requests.exceptions import ConnectTimeout
+
+        class HttpbinGetWithTimeout(self.HttpbinGet):
+            timeout = 0.01
+
+        app = Flask(__name__)
+
+        @app.errorhandler(ConnectTimeout)
+        def handle(error):
+            return 'ConnectTimeout'
+
+        proxy = Proxy(app)
+        proxy.add_upstream(HttpbinGetWithTimeout)
+
+        with app.test_client() as client:
+            resp = client.get('/httpbin/get')
+            self.assertIn('ConnectTimeout', resp.data) 
+****************************************************************************************************
+
+
+Python requests.exceptions.ChunkedEncodingError() Examples
+
+Example 1
+def get_stream(url, headers=None, encoding='UTF-8'):
+    """分块接受数据"""
+    try:
+        lines = requests.get(url, headers=headers, timeout=_tiemout, stream=True, proxies=proxies)
+        html = list()
+        for line in lines.iter_lines():
+            if b'\x00' in line:
+                break
+            line = line.decode(encoding)
+            html.append(line.strip())
+        return '\r\n'.join(html).strip()
+    except ChunkedEncodingError as e:
+        return '\r\n'.join(html).strip()
+    except ConnectionError as e:
+        return "ERROR:" + "HTTP连接错误"
+    except ConnectTimeout as e:
+        return "ERROR:" + "HTTP连接超时错误"
+    except Exception as e:
+        return 'ERROR:' + str(e) 
+****************************************************************************************************
+
+
+Python requests.exceptions.MissingSchema() Examples
+
+Example 1
+def saveFile(self, url, page, idx):
+        user_define_name = self.now_date() + '_p_' + str(page) + '_' + string.zfill(idx, 2)  # 补齐2位
+        file_ext = self.file_extension(url)  # 后缀名
+        save_file_name = user_define_name + "_" + file_ext
+
+        # 不能保存，改用open方法
+        # urllib.urlretrieve(item[0], self.save_path + save_file_name)
+        # 保存图片
+        url = self.CheckUrlValidate(url)
+        try:
+            pic = requests.get(url, timeout=10)
+            f = open(self.store_dir + os.sep + save_file_name, 'wb')
+            f.write(pic.content)
+            f.close()
+            print '\ndone save file ' + save_file_name
+        except ReadTimeout:
+            print 'save file %s failed. cause by timeout(10)' % (save_file_name)
+        except MissingSchema:
+            print 'invalid url %s' % (url)
+        except Exception, e:
+            print e
+
+    # 检查url是否包括http:协议 
+****************************************************************************************************
+
+
+Python requests.exceptions.InvalidURL() Examples
+
+Example 1
+def connect_signal_to_case(signal):
+    """
+    This will create a connection between the case and the signal.
+    Now from the ZRC you wull know which signal has more detailed information.
+    """
+    if signal.case.connected_in_external_system:
+        return signal.case
+
+    data = {
+        'zaak': signal.case.zrc_link,
+        'object': settings.HOST_URL + reverse('v0:signal-auth-detail', kwargs={'pk': signal.id}),
+        'type': settings.ZRC_ZAAKOBJECT_TYPE
+    }
+
+    try:
+        zds_client.zrc.create(resource='zaakobject', data=data)
+        CaseSignal.actions.set_connected_in_external_system(signal.case)
+        return signal.case
+    except (ClientError, ConnectionError, InvalidURL) as error:
+        logger.exception(error)
+        raise CaseConnectionException() 
+****************************************************************************************************
+
+
+Python requests.exceptions.ProxyError() Examples
+
+Example 1
+def vtcheck(url, inspect, proxy, verb=None):
+    """checks for verb tampering/avalaibility"""
+    if proxy:
+        print '\n{0}[*]{1} Proxy: {0}{2}ON{1}'.format(BT,S,FG)
+    else: print '\n{0}[*]{1} Proxy: {0}{2}OFF{1}'.format(BT,S,FR)
+    print "{}[+]{} Checking for HTTP methods availability".format(BT,S)
+    try:
+        if verb:
+            proceed(verb, url, proxy, inspect)
+        else:
+            for vb in VERBS: proceed(vb, url, proxy, inspect)
+    except ProxyError:
+        print '{0}[x] Cannot connect to proxy.{1}'.format(FR,F)
+    except Timeout:
+        print '{0}[x] Connection timed-out (timeout set to 10.0)\n{1}'.format(FR,F)
+    except Exception, error:
+        print '{0}[x] {2}{1}'.format(FR,F,error) 
+****************************************************************************************************
+
+
+Python requests.exceptions.TooManyRedirects() Examples
+
+Example 1
+def _get_html(url, is_proxy=True):
+    """
+    获取页面
+    :param url: 链接
+    :param is_proxy: 是否启用代理
+    :return: html文本/None
+    """
+    if 'suv' not in _session.cookies:
+        _session.get('https://pb.sogou.com/pv.gif')
+    if is_proxy and setting.get_proxy:
+        for _ in range(setting.repeat_times):
+            proxies = setting.get_proxy()
+            try: resp = _session.get(url, proxies=proxies, timeout=setting.proxy_timeout)
+            except (Timeout, ProxyError, TooManyRedirects): continue
+            if url == resp.url: return str(resp.content, 'utf-8')
+        else:
+            resp = _session.get(url)
+            if url == resp.url: return str(resp.content, 'utf-8')
+            setting.proxy_error_callback(url)
+            return None
+    else:
+        resp = _session.get(url)
+        if url == resp.url: return str(resp.content, 'utf-8')
+        else: return _get_html(url, False) if _identify_captcha() else None 
+****************************************************************************************************
+
+
+Python requests.exceptions.InvalidSchema() Examples
+
+Example 1
+def get_image_from_src(src):
+    """
+    Take a src attribute from an image tag and return the content image data
+    associated with that image. At the minimum we should handle https:// and
+    base64 encoded images.
+    """
+    # Handle the easy case first, its an external link to somewhere else.
+    try:
+        response = requests.get(src)
+    except (InvalidSchema, MissingSchema):
+        pass
+    else:
+        return response.content
+
+    # Check to see if it's a base64 encoded image.
+    match = uri.is_encoded_image_uri(src)
+    if match:
+        return src
+
+    # Not really sure what is going on here, punt for now.
+    return src 
+****************************************************************************************************
+
+
+Python requests.auth.HTTPBasicAuth() Examples
+
+Example 1
+def login(self):
+        HEADERS = {
+            'Ubi-AppId': UBI_APP_ID,
+            'Content-Type': 'application/json; charset=UTF-8',
+            'User-Agent': 'Mozilla/5.0',
+            'Ubi-LocaleCode': 'en-US',
+            'Accept-Language': 'en-US,en;q=0.9'
+        }
+        payload = {'rememberMe': 'true'}
+        r = requests.post(LOGIN_URL, headers=HEADERS, auth=HTTPBasicAuth(self.SECRET_USERNAME, self.SECRET_PASSWORD), json=payload)
+        if r.status_code == 200:
+            self.session = json.loads(r.text)
+            f = open('info.txt', 'w')
+            json.dump(r.json(), f)
+            f.close()
+            print('INFO: Created a new session successfully.')
+            self.connected = True
+            return True
+        else:
+            #raise Exception('ERROR: Login request failed:')
+            print(r)
+            print(type(r))
+            pprint.pprint(r.text)
+            self.connected = False
+            return False 
+****************************************************************************************************
+
+
+Python requests.auth.AuthBase() Examples
+
+Example 1
+def get_response(method: Callable,
+                 url: str,
+                 auth: AuthBase,
+                 json: Optional[Dict]=frozenset()):
+    """
+    Sends a request and checks the response for errors, and retries unless it's
+    a HTTP client error.
+    """
+    headers = ({'If-None-Match': _RESPONSES[url].headers.get('ETag')}
+               if url in _RESPONSES else {})
+    response = method(url, auth=auth, json=dict(json or {}), headers=headers)
+    if response.status_code == 304 and url in _RESPONSES:
+        return _RESPONSES[url]
+    elif response.status_code >= 300:
+        raise RuntimeError(response.text, response.status_code)
+    _RESPONSES[url] = response
+    return response 
+****************************************************************************************************
+
+
+Python requests.auth.HTTPDigestAuth() Examples
+
+Example 1
+def setAuthMethod(self, auth_method):
+        "Set the authentication method to use for the requests."
+        self.auth_method = auth_method
+        if len(self.auth_credentials) == 2:
+            username, password = self.auth_credentials
+            if self.auth_method == "basic":
+                from requests.auth import HTTPBasicAuth
+                self.h.auth = HTTPBasicAuth(username, password)
+            elif self.auth_method == "digest":
+                from requests.auth import HTTPDigestAuth
+                self.h.auth = HTTPDigestAuth(username, password)
+            elif self.auth_method == "ntlm":
+                from requests_ntlm import HttpNtlmAuth
+                self.h.auth = HttpNtlmAuth(username, password)
+        elif self.auth_method == "kerberos":
+            from requests_kerberos import HTTPKerberosAuth
+            self.h.auth = HTTPKerberosAuth() 
+****************************************************************************************************
+
+
+Python requests.auth._basic_auth_str() Examples
+
+Example 1
+def _header_value(self):
+        return auth._basic_auth_str(self._username, self._password) 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.exceptions.InsecureRequestWarning() Examples
+
+Example 1
+def __init__(self, host, login, password, timeout=60, port=443,
+                 cacert=None):
+        """Constructor for RIBCLOperations.
+
+        """
+        self.host = host
+        self.login = login
+        self.password = password
+        self.timeout = timeout
+        self.port = port
+        self.cacert = cacert
+
+        # By default, requests logs following message if verify=False
+        #   InsecureRequestWarning: Unverified HTTPS request is
+        #   being made. Adding certificate verification is strongly advised.
+        # Just disable the warning if user intentionally did this.
+        if self.cacert is None:
+            urllib3.disable_warnings(urllib3_exceptions.InsecureRequestWarning) 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.exceptions.InsecurePlatformWarning() Examples
+
+Example 1
+def checkenv(self):
+        try:
+            import requests.packages.urllib3
+        except ImportError:
+            raise Exception('requests package not installed. Run pip install -r requirements.txt and try again.')
+
+        # Disable warnings about SSL connections
+        try:
+            from requests.packages.urllib3.exceptions import InsecureRequestWarning
+            requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        except ImportError:
+            pass
+
+        try:
+            from requests.packages.urllib3.exceptions import InsecurePlatformWarning
+            requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
+        except ImportError:
+            pass 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.exceptions.SNIMissingWarning() Examples
+
+Example 1
+def _suppress_library_warnings(self):
+        # try to suppress known warnings from requests if possible
+        try:
+            from requests.packages.urllib3.exceptions import \
+                InsecurePlatformWarning
+            warnings.simplefilter('ignore', category=InsecurePlatformWarning)
+        except:  # pragma: no cover
+            pass
+
+        try:
+            from requests.packages.urllib3.exceptions import SNIMissingWarning
+            warnings.simplefilter('ignore', category=SNIMissingWarning)
+        except:  # pragma: no cover
+            pass
+
+        # if we're explicitly ignoring validation, try to suppress
+        # InsecureRequestWarning, since the user opted-in
+        if self.cert_validation is False:
+            try:
+                from requests.packages.urllib3.exceptions import \
+                    InsecureRequestWarning
+                warnings.simplefilter('ignore',
+                                      category=InsecureRequestWarning)
+            except:  # pragma: no cover
+                pass 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.exceptions.ProtocolError() Examples
+
+Example 1
+def get_history(self, *args, **kwargs):
+        '''
+        Query the API for a given instrument and timeframe and return its df.
+        '''
+        columns = kwargs.pop('columns', self.default_history_dataframe_columns)
+        include_current = kwargs.pop('include_current', False)
+        if 'time' not in columns:
+            columns = ('time',) + tuple(columns)
+        while True:
+            try:
+                response = self._api.get_history(*args, **kwargs)
+                if response and response.get('candles'):
+                    df = pd.DataFrame(
+                        data=response['candles'],
+                        columns=columns,
+                    )
+                    df['time'] = df['time'].map(date_parse.parse)
+                    df['closeMid'] = df.loc[:,('closeBid','closeAsk')].mean(axis=1)
+                    df.index = df['time']
+                    if not include_current:
+                        df = df[df.complete == True]
+                    return df
+                else:
+                    log.info("no history for {} and timeframe {}".format(
+                             kwargs['instrument']), kwargs['granularity'])
+                    return pd.DataFrame()
+            except ValueError as e:
+                log.warning("[!] Error when loading candles for {}: {}".format(
+                            kwargs['instrument'], e))
+                return pd.DataFrame()
+            except (ProtocolError, OandaError, SysCallError) as e:
+                log.warning("[!] Connection error ({0:s}). Reconnecting...".format(e))
+            sleep(3) 
+****************************************************************************************************
+
+
+Python requests_mock.mock() Examples
+
+Example 1
+def test_calc_route_info_with_path_not_ignored(self):
+        with requests_mock.mock() as m:
+            lat = [47.49, 47.612, 47.645]
+            lon = [19.04, 18.99, 18.82]
+            bounds = [{"bottom": 47.4, "top": 47.5, "left": 19, "right": 19.1}, None, {"bottom": 47.6, "top": 47.7, "left": 18.8, "right": 18.9}]
+            length = [400, 5000, 500]
+            time = [40, 300, 50]
+            address_to_coords_response = [
+                '[{"city":"Test1","location":{"lat":%s,"lon":%s},"bounds":%s}]' % (lat[0], lon[0], str(bounds[0]).replace("'", '"')),
+                '[{"city":"Test2","location":{"lat":%s,"lon":%s},"bounds":%s}]' % (lat[2], lon[2], str(bounds[2]).replace("'", '"'))
+            ]
+            m.get(self.address_req, [{'text': address_to_coords_response[0]}, {'text': address_to_coords_response[1]}])
+            route = wrc.WazeRouteCalculator("", "")
+        route_mock = mock.Mock(return_value={"results": [
+            {"length": length[0], "crossTime": time[0], "path": {"x": lon[0], "y": lat[0]}},
+            {"length": length[1], "crossTime": time[1], "path": {"x": lon[1], "y": lat[1]}},
+            {"length": length[2], "crossTime": time[2], "path": {"x": lon[2], "y": lat[2]}}
+        ]})
+        route.get_route = route_mock
+        time, dist = route.calc_route_info()
+        assert route_mock.called
+        assert time == 6.5
+        assert dist == 5.9 
+****************************************************************************************************
+
+
+Python requests_mock.Mocker() Examples
+
+Example 1
+def test_save(self):
+        """
+        DkronJob: Test saving job
+        """
+        job = DkronJob(self.client, name="job1")
+        with requests_mock.Mocker() as mocker:
+            exp = job.marshal()
+            mocker.register_uri(
+                requests_mock.POST,
+                "http://localhost:8080/v1/jobs",
+                text=exp,
+                status_code=201,
+            )
+
+            got = json.dumps(job.save())
+            self.assertEqual(
+                exp,
+                got,
+                "Exp: '%s', Got: '%s'" % (exp, got)
+            ) 
+****************************************************************************************************
+
+
+Python requests_mock.ANY() Examples
+
+Example 1
+def test_subscriptions_update(self):
+
+        subscription = self._account.subscriptions.create({
+            "subscription_id": "1c59e661-8c90-4cb5-aab1-00547ea45ecb",
+            "order_type": "portins",
+            "order_id": "98939562-90b0-40e9-8335-5526432d9741",
+            "email_subscription": {
+                "email": "[email protected]",
+                "digest_requested": "DAILY"
+            }
+        }, False);
+
+        self.assertEqual(subscription.subscription_id,
+            "1c59e661-8c90-4cb5-aab1-00547ea45ecb")
+        self.assertEqual(subscription.order_type, "portins")
+        self.assertEqual(subscription.order_id,
+            "98939562-90b0-40e9-8335-5526432d9741")
+
+        with requests_mock.Mocker() as m:
+            url = self._client.config.url + subscription.get_xpath()
+            m.put(requests_mock.ANY)
+            subscription.save()
+
+            self.assertEqual(m.request_history[0].url, url) 
+****************************************************************************************************
+
+
+Python requests_mock.Adapter() Examples
+
+Example 1
+def dictionary_setup(_app):
+    url = "s3://testurl"
+    session = requests.Session()
+    adapter = requests_mock.Adapter()
+    session.mount("s3", adapter)
+    json_dict = json.load(open(PATH_TO_SCHEMA_DIR + "/dictionary.json"))
+    adapter.register_uri("GET", url, json=json_dict, status_code=200)
+    resp = session.get(url)
+
+    with patch("requests.get") as get_mocked:
+        get_mocked.return_value = resp
+        datadictionary = DataDictionary(url=url)
+        dictionary.init(datadictionary)
+        from gdcdatamodel import models as md
+        from gdcdatamodel import validators as vd
+
+        models.init(md)
+        validators.init(vd) 
+****************************************************************************************************
+
+
+Python requests.adapters.HTTPAdapter() Examples
+
+Example 1
+def requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.HTTPError() Examples
+
+Example 1
+def request(self, host, handler, request_body, verbose=False):
+        parts = (self._scheme, host, handler, None, None, None)
+        url = urllib_parse.urlunparse(parts)
+        try:
+            headers = {'Content-Type': 'text/xml'}
+            response = self._session.post(url, data=request_body,
+                                          headers=headers, stream=True)
+            response.raise_for_status()
+            self.verbose = verbose
+            return self.parse_response(response.raw)
+        except requests.HTTPError as exc:
+            logger.critical(
+                "HTTP error %s while getting %s",
+                exc.response.status_code, url,
+            )
+            raise 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.Timeout() Examples
+
+Example 1
+def _get_html_page(link, session=None):
+    # type: (Link, Optional[PipSession]) -> Optional[HTMLPage]
+    if session is None:
+        raise TypeError(
+            "_get_html_page() missing 1 required keyword argument: 'session'"
+        )
+
+    url = link.url.split('#', 1)[0]
+
+    # Check for VCS schemes that do not support lookup as web pages.
+    vcs_scheme = _match_vcs_scheme(url)
+    if vcs_scheme:
+        logger.debug('Cannot look at %s URL %s', vcs_scheme, link)
+        return None
+
+    # Tack index.html onto file:// URLs that point to directories
+    scheme, _, path, _, _, _ = urllib_parse.urlparse(url)
+    if (scheme == 'file' and os.path.isdir(urllib_request.url2pathname(path))):
+        # add trailing slash if not present so urljoin doesn't trim
+        # final segment
+        if not url.endswith('/'):
+            url += '/'
+        url = urllib_parse.urljoin(url, 'index.html')
+        logger.debug(' file: URL is directory, getting %s', url)
+
+    try:
+        resp = _get_html_response(url, session=session)
+    except _NotHTTP:
+        logger.debug(
+            'Skipping page %s because it looks like an archive, and cannot '
+            'be checked by HEAD.', link,
+        )
+    except _NotHTML as exc:
+        logger.debug(
+            'Skipping page %s because the %s request got Content-Type: %s',
+            link, exc.request_desc, exc.content_type,
+        )
+    except HTTPError as exc:
+        _handle_get_page_fail(link, exc)
+    except RetryError as exc:
+        _handle_get_page_fail(link, exc)
+    except SSLError as exc:
+        reason = "There was a problem confirming the ssl certificate: "
+        reason += str(exc)
+        _handle_get_page_fail(link, reason, meth=logger.info)
+    except requests.ConnectionError as exc:
+        _handle_get_page_fail(link, "connection error: %s" % exc)
+    except requests.Timeout:
+        _handle_get_page_fail(link, "timed out")
+    else:
+        return _make_html_page(resp)
+    return None 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.ConnectionError() Examples
+
+Example 1
+def _get_html_page(link, session=None):
+    # type: (Link, Optional[PipSession]) -> Optional[HTMLPage]
+    if session is None:
+        raise TypeError(
+            "_get_html_page() missing 1 required keyword argument: 'session'"
+        )
+
+    url = link.url.split('#', 1)[0]
+
+    # Check for VCS schemes that do not support lookup as web pages.
+    vcs_scheme = _match_vcs_scheme(url)
+    if vcs_scheme:
+        logger.debug('Cannot look at %s URL %s', vcs_scheme, link)
+        return None
+
+    # Tack index.html onto file:// URLs that point to directories
+    scheme, _, path, _, _, _ = urllib_parse.urlparse(url)
+    if (scheme == 'file' and os.path.isdir(urllib_request.url2pathname(path))):
+        # add trailing slash if not present so urljoin doesn't trim
+        # final segment
+        if not url.endswith('/'):
+            url += '/'
+        url = urllib_parse.urljoin(url, 'index.html')
+        logger.debug(' file: URL is directory, getting %s', url)
+
+    try:
+        resp = _get_html_response(url, session=session)
+    except _NotHTTP:
+        logger.debug(
+            'Skipping page %s because it looks like an archive, and cannot '
+            'be checked by HEAD.', link,
+        )
+    except _NotHTML as exc:
+        logger.debug(
+            'Skipping page %s because the %s request got Content-Type: %s',
+            link, exc.request_desc, exc.content_type,
+        )
+    except HTTPError as exc:
+        _handle_get_page_fail(link, exc)
+    except RetryError as exc:
+        _handle_get_page_fail(link, exc)
+    except SSLError as exc:
+        reason = "There was a problem confirming the ssl certificate: "
+        reason += str(exc)
+        _handle_get_page_fail(link, reason, meth=logger.info)
+    except requests.ConnectionError as exc:
+        _handle_get_page_fail(link, "connection error: %s" % exc)
+    except requests.Timeout:
+        _handle_get_page_fail(link, "timed out")
+    else:
+        return _make_html_page(resp)
+    return None 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.Session() Examples
+
+Example 1
+def get_session():
+    adapter = CacheControlAdapter(
+        DictCache(),
+        cache_etags=True,
+        serializer=None,
+        heuristic=None,
+    )
+    sess = requests.Session()
+    sess.mount('http://', adapter)
+    sess.mount('https://', adapter)
+
+    sess.cache_controller = adapter.controller
+    return sess 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.exceptions.SSLError() Examples
+
+Example 1
+def _get_html_page(link, session=None):
+    # type: (Link, Optional[PipSession]) -> Optional[HTMLPage]
+    if session is None:
+        raise TypeError(
+            "_get_html_page() missing 1 required keyword argument: 'session'"
+        )
+
+    url = link.url.split('#', 1)[0]
+
+    # Check for VCS schemes that do not support lookup as web pages.
+    vcs_scheme = _match_vcs_scheme(url)
+    if vcs_scheme:
+        logger.debug('Cannot look at %s URL %s', vcs_scheme, link)
+        return None
+
+    # Tack index.html onto file:// URLs that point to directories
+    scheme, _, path, _, _, _ = urllib_parse.urlparse(url)
+    if (scheme == 'file' and os.path.isdir(urllib_request.url2pathname(path))):
+        # add trailing slash if not present so urljoin doesn't trim
+        # final segment
+        if not url.endswith('/'):
+            url += '/'
+        url = urllib_parse.urljoin(url, 'index.html')
+        logger.debug(' file: URL is directory, getting %s', url)
+
+    try:
+        resp = _get_html_response(url, session=session)
+    except _NotHTTP:
+        logger.debug(
+            'Skipping page %s because it looks like an archive, and cannot '
+            'be checked by HEAD.', link,
+        )
+    except _NotHTML as exc:
+        logger.debug(
+            'Skipping page %s because the %s request got Content-Type: %s',
+            link, exc.request_desc, exc.content_type,
+        )
+    except HTTPError as exc:
+        _handle_get_page_fail(link, exc)
+    except RetryError as exc:
+        _handle_get_page_fail(link, exc)
+    except SSLError as exc:
+        reason = "There was a problem confirming the ssl certificate: "
+        reason += str(exc)
+        _handle_get_page_fail(link, reason, meth=logger.info)
+    except requests.ConnectionError as exc:
+        _handle_get_page_fail(link, "connection error: %s" % exc)
+    except requests.Timeout:
+        _handle_get_page_fail(link, "timed out")
+    else:
+        return _make_html_page(resp)
+    return None 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.exceptions.InvalidURL() Examples
+
+Example 1
+def send(self, request, stream=None, timeout=None, verify=None, cert=None,
+             proxies=None):
+        parsed_url = urlparse.urlparse(request.url)
+
+        # We only work for requests with a host of localhost
+        if parsed_url.netloc.lower() != "localhost":
+            raise InvalidURL("Invalid URL %r: Only localhost is allowed" %
+                request.url)
+
+        real_url = urlparse.urlunparse(parsed_url[:1] + ("",) + parsed_url[2:])
+        pathname = url_to_path(real_url)
+
+        resp = Response()
+        resp.status_code = 200
+        resp.url = real_url
+
+        stats = os.stat(pathname)
+        modified = email.utils.formatdate(stats.st_mtime, usegmt=True)
+        resp.headers = CaseInsensitiveDict({
+            "Content-Type": mimetypes.guess_type(pathname)[0] or "text/plain",
+            "Content-Length": stats.st_size,
+            "Last-Modified": modified,
+        })
+
+        resp.raw = LocalFSResponse(open(pathname, "rb"))
+        resp.close = resp.raw.close
+
+        return resp 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.exceptions.ChunkedEncodingError() Examples
+
+Example 1
+def _download_url(resp, link, temp_location):
+    fp = open(temp_location, 'wb')
+    download_hash = None
+    if link.hash and link.hash_name:
+        try:
+            download_hash = hashlib.new(link.hash_name)
+        except ValueError:
+            logger.warn("Unsupported hash name %s for package %s" % (link.hash_name, link))
+    try:
+        total_length = int(resp.headers['content-length'])
+    except (ValueError, KeyError, TypeError):
+        total_length = 0
+    downloaded = 0
+    show_progress = total_length > 40 * 1000 or not total_length
+    show_url = link.show_url
+    try:
+        if show_progress:
+            ## FIXME: the URL can get really long in this message:
+            if total_length:
+                logger.start_progress('Downloading %s (%s): ' % (show_url, format_size(total_length)))
+            else:
+                logger.start_progress('Downloading %s (unknown size): ' % show_url)
+        else:
+            logger.notify('Downloading %s' % show_url)
+        logger.info('Downloading from URL %s' % link)
+
+        def resp_read(chunk_size):
+            try:
+                # Special case for urllib3.
+                try:
+                    for chunk in resp.raw.stream(
+                            chunk_size, decode_content=False):
+                        yield chunk
+                except IncompleteRead as e:
+                    raise ChunkedEncodingError(e)
+            except AttributeError:
+                # Standard file-like object.
+                while True:
+                    chunk = resp.raw.read(chunk_size)
+                    if not chunk:
+                        break
+                    yield chunk
+
+        for chunk in resp_read(4096):
+            downloaded += len(chunk)
+            if show_progress:
+                if not total_length:
+                    logger.show_progress('%s' % format_size(downloaded))
+                else:
+                    logger.show_progress('%3i%%  %s' % (100 * downloaded / total_length, format_size(downloaded)))
+            if download_hash is not None:
+                download_hash.update(chunk)
+            fp.write(chunk)
+        fp.close()
+    finally:
+        if show_progress:
+            logger.end_progress('%s downloaded' % format_size(downloaded))
+    return download_hash 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.models.Response() Examples
+
+Example 1
+def send(self, request, stream=None, timeout=None, verify=None, cert=None,
+             proxies=None):
+        pathname = url_to_path(request.url)
+
+        resp = Response()
+        resp.status_code = 200
+        resp.url = request.url
+
+        try:
+            stats = os.stat(pathname)
+        except OSError as exc:
+            resp.status_code = 404
+            resp.raw = exc
+        else:
+            modified = email.utils.formatdate(stats.st_mtime, usegmt=True)
+            content_type = mimetypes.guess_type(pathname)[0] or "text/plain"
+            resp.headers = CaseInsensitiveDict({
+                "Content-Type": content_type,
+                "Content-Length": stats.st_size,
+                "Last-Modified": modified,
+            })
+
+            resp.raw = open(pathname, "rb")
+            resp.close = resp.raw.close
+
+        return resp 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.structures.CaseInsensitiveDict() Examples
+
+Example 1
+def prepare_response(self, request, cached):
+        """Verify our vary headers match and construct a real urllib3
+        HTTPResponse object.
+        """
+        # Special case the '*' Vary value as it means we cannot actually
+        # determine if the cached response is suitable for this request.
+        if "*" in cached.get("vary", {}):
+            return
+
+        # Ensure that the Vary headers for the cached response match our
+        # request
+        for header, value in cached.get("vary", {}).items():
+            if request.headers.get(header, None) != value:
+                return
+
+        body_raw = cached["response"].pop("body")
+
+        headers = CaseInsensitiveDict(data=cached['response']['headers'])
+        if headers.get('transfer-encoding', '') == 'chunked':
+            headers.pop('transfer-encoding')
+
+        cached['response']['headers'] = headers
+
+        try:
+            body = io.BytesIO(body_raw)
+        except TypeError:
+            # This can happen if cachecontrol serialized to v1 format (pickle)
+            # using Python 2. A Python 2 str(byte string) will be unpickled as
+            # a Python 3 str (unicode string), which will cause the above to
+            # fail with:
+            #
+            #     TypeError: 'str' does not support the buffer interface
+            body = io.BytesIO(body_raw.encode('utf8'))
+
+        return HTTPResponse(
+            body=body,
+            preload_content=False,
+            **cached["response"]
+        ) 
+****************************************************************************************************
+
+
+Python six.moves.urllib.request.urlopen() Examples
+
+Example 1
+def _create_centos_based_glance_image(self):
+        imagepath = mkstemp(suffix='.qcow2')[1]
+        imagefile = open(imagepath, 'wb+')
+        image_response = urlopen('http://cloud.centos.org/centos/7/images/' +
+                                 'CentOS-7-x86_64-GenericCloud.qcow2')
+
+        LOG.info('Downloading CentOS7 image')
+        while True:
+            imagecopy = image_response.read(100 * 1024 * 1024)
+            if imagecopy == '':
+                break
+            imagefile.write(imagecopy)
+
+        imagefile.close()
+
+        LOG.info('Creating Glance image using the downloaded image file')
+        return self._image_create('centos', 'bare', imagepath, 'qcow2') 
+****************************************************************************************************
+
+
+Python six.moves.urllib.request.urlretrieve() Examples
+
+Example 1
+def maybe_download(url, filename, prefix, num_bytes=None):
+    """Takes an URL, a filename, and the expected bytes, download
+    the contents and returns the filename.
+    num_bytes=None disables the file size check."""
+    local_filename = None
+    if not os.path.exists(os.path.join(prefix, filename)):
+        try:
+            print "Downloading file {}...".format(url + filename)
+            with tqdm(unit='B', unit_scale=True, miniters=1, desc=filename) as t:
+                local_filename, _ = urlretrieve(url + filename, os.path.join(prefix, filename), reporthook=reporthook(t))
+        except AttributeError as e:
+            print "An error occurred when downloading the file! Please get the dataset using a browser."
+            raise e
+    # We have a downloaded file
+    # Check the stats and make sure they are ok
+    file_stats = os.stat(os.path.join(prefix, filename))
+    if num_bytes is None or file_stats.st_size == num_bytes:
+        print "File {} successfully loaded".format(filename)
+    else:
+        raise Exception("Unexpected dataset size. Please get the dataset using a browser.")
+
+    return local_filename 
+****************************************************************************************************
+
+
+Python six.moves.urllib.request.Request() Examples
+
+Example 1
+def send_message(self, message, phone_numbers):
+        send_url = "https://api.textlocal.in/send/?"
+        unicode_used = 'false'
+        if not isinstance(message, str):
+            message = message.encode('utf-8')
+        if is_not_ascii(message):
+            unicode_used = 'true'
+        data = parse.urlencode({'numbers': phone_numbers,
+                                'message': message,
+                                'sender': self.sendername,
+                                'apikey': self.apikey,
+                                'unicode': unicode_used})
+        data = data.encode('utf-8')
+        # Avoid triggering bot errors by setting a user agent
+        user_agent = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
+        requester = request.Request(send_url, headers=user_agent)
+        f = request.urlopen(requester, data)
+        return json.loads(f.read().decode('latin1')) 
+****************************************************************************************************
+
+
+Python six.moves.urllib.request.pathname2url() Examples
+
+Example 1
+def find_asset(theme, asset):
+
+    theme_path = ''
+    for name, label, path in hz_themes.get_themes():
+        if theme == name:
+            theme_path = path
+
+    theme_path = os.path.join(settings.ROOT_PATH, theme_path)
+
+    # If there is a 'static' subdir of the theme, then use
+    # that as the theme's asset root path
+    static_path = os.path.join(theme_path, 'static')
+    if os.path.exists(static_path):
+        theme_path = static_path
+
+    # The full path to the asset requested
+    asset_path = os.path.join(theme_path, asset)
+    if os.path.exists(asset_path):
+        return_path = os.path.join(hz_themes.get_theme_dir(), theme, asset)
+    else:
+        return_path = os.path.join('dashboard', asset)
+
+    return staticfiles_storage.url(pathname2url(return_path)) 
+****************************************************************************************************
+
+
+Python six.moves.urllib.request.build_opener() Examples
+
+Example 1
+def http_call(method, url, data=None):
+    """Utility method for making HTTP requests."""
+    LOG.debug("http_call(): Calling %s %s" % (method, url))
+    opener = build_opener(HTTPHandler)
+    if data:
+        data = simplejson.dumps(data)
+        LOG.debug("http_call(): With body: %s" % data)
+    request = Request(url, data)
+    request.add_header('Accept', 'application/json')
+    if data:
+        request.add_header('Content-Type', 'application/json')
+    request.get_method = lambda: method
+    resp = opener.open(request)
+    if resp.getcode() >= 400:
+        raise exceptions.RomanaException("Error in %s %s with payload %s: %s", method, url, data, resp)
+    body = resp.read()
+    data = simplejson.loads(body)
+    return data 
+****************************************************************************************************
+
+
+Python requests_oauthlib.OAuth2Session() Examples
+
+Example 1
+def get_google_auth(state=None, token=None):
+    if token:
+        return OAuth2Session(Auth.CLIENT_ID, token=token)
+    if state:
+        return OAuth2Session(
+            Auth.CLIENT_ID,
+            state=state,
+            redirect_uri=Auth.REDIRECT_URI,
+            scope=['email']
+        )
+    oauth = OAuth2Session(
+        Auth.CLIENT_ID,
+        redirect_uri=Auth.REDIRECT_URI,
+        scope=['email']
+    )
+    return oauth 
+****************************************************************************************************
+
+
+Python requests_oauthlib.OAuth1() Examples
+
+Example 1
+def dologin():
+    """Attempt to login."""
+    if not (
+        'access_token_key' in session and
+        'access_token_secret' in session
+    ):
+        raise NameError("No access keys")
+
+    access_token = AccessToken(
+        session['access_token_key'],
+        session['access_token_secret']
+    )
+    session['username'] = handshaker.identify(access_token)['username']
+    auth = OAuth1(
+        client_key=consumer_token.key,
+        client_secret=consumer_token.secret,
+        resource_owner_key=access_token.key,
+        resource_owner_secret=access_token.secret
+    )
+
+    return auth 
+****************************************************************************************************
+
+
+Python requests_oauthlib.OAuth1Session() Examples
+
+Example 1
+def update_twitter_profile(is_online, location):
+    """
+    Parameters
+    ----------
+    is_online : boolean
+    location : str
+        String to be set as user's location with no formatting.
+        This function is not responsible for masking private location or offline status.
+    """
+    twitter = OAuth1Session(os.environ['twitter_consumer_key'],
+                            os.environ['twitter_consumer_secret'],
+                            os.environ['twitter_oauth_token'],
+                            os.environ['twitter_oauth_token_secret'])
+    params = {
+        'name':
+        name['name_template'].format(
+            status=name[('on' if is_online else 'off') + 'line_status']),
+        'location':
+        location
+    }
+    twitter.post(
+        'https://api.twitter.com/1.1/account/update_profile.json',
+        params=params)
+    return "lambda test" 
+****************************************************************************************************
+
+
+Python requests_oauthlib.OAuth2() Examples
+
+Example 1
+def get_request_kwargs(self, api_params, *args, **kwargs):
+        params = super({{ cookiecutter.service_name|title|replace(' ', '') }}ClientAdapter, self).get_request_kwargs(
+            api_params, *args, **kwargs)
+
+        {% if cookiecutter.use_oauth_2 == 'y' %}
+        params['auth'] = OAuth2(
+            api_params.get('client_id', ''), token={
+                'access_token': api_params.get('access_token'),
+                'token_type': 'Bearer'})
+        {% elif cookiecutter.use_oauth_1 == 'y' %}
+        params['auth'] = OAuth1(
+            api_params.get('api_key'),
+            client_secret=api_params.get('api_secret'),
+            resource_owner_key=api_params.get('access_token', ''),
+            resource_owner_secret=api_params.get('access_token_secret', ''))
+        {% elif cookiecutter.use_basic_auth == 'y' %}
+        params['auth'] = HTTPBasicAuth(
+            api_params.get('user'), api_params.get('password'))
+        {% endif %}
+
+        return params 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.packages.urllib3.Retry() Examples
+
+Example 1
+def __init__(self, *args, **kwargs):
+        retries = kwargs.pop("retries", 0)
+        cache = kwargs.pop("cache", None)
+        insecure_hosts = kwargs.pop("insecure_hosts", [])
+
+        super(PipSession, self).__init__(*args, **kwargs)
+
+        # Attach our User Agent to the request
+        self.headers["User-Agent"] = user_agent()
+
+        # Attach our Authentication handler to the session
+        self.auth = MultiDomainBasicAuth()
+
+        # Create our urllib3.Retry instance which will allow us to customize
+        # how we handle retries.
+        retries = urllib3.Retry(
+            # Set the total number of retries that a particular request can
+            # have.
+            total=retries,
+
+            # A 503 error from PyPI typically means that the Fastly -> Origin
+            # connection got interrupted in some way. A 503 error in general
+            # is typically considered a transient error so we'll go ahead and
+            # retry it.
+            status_forcelist=[503],
+
+            # Add a small amount of back off between failed requests in
+            # order to prevent hammering the service.
+            backoff_factor=0.25,
+        )
+
+        # We want to _only_ cache responses on securely fetched origins. We do
+        # this because we can't validate the response of an insecurely fetched
+        # origin, and we don't want someone to be able to poison the cache and
+        # require manual eviction from the cache to fix it.
+        if cache:
+            secure_adapter = CacheControlAdapter(
+                cache=SafeFileCache(cache, use_dir_lock=True),
+                max_retries=retries,
+            )
+        else:
+            secure_adapter = HTTPAdapter(max_retries=retries)
+
+        # Our Insecure HTTPAdapter disables HTTPS validation. It does not
+        # support caching (see above) so we'll use it for all http:// URLs as
+        # well as any https:// host that we've marked as ignoring TLS errors
+        # for.
+        insecure_adapter = InsecureHTTPAdapter(max_retries=retries)
+
+        self.mount("https://", secure_adapter)
+        self.mount("http://", insecure_adapter)
+
+        # Enable file:// urls
+        self.mount("file://", LocalFSAdapter())
+
+        # We want to use a non-validating adapter for any requests which are
+        # deemed insecure.
+        for host in insecure_hosts:
+            self.mount("https://{0}/".format(host), insecure_adapter) 
+****************************************************************************************************
+
+
+Python BaseHTTPServer.BaseHTTPRequestHandler.handle() Examples
+
+Example 1
+def handle(self):
+        """Handles a request ignoring dropped connections."""
+        rv = None
+        try:
+            rv = BaseHTTPRequestHandler.handle(self)
+        except (socket.error, socket.timeout) as e:
+            self.connection_dropped(e)
+        except Exception:
+            if self.server.ssl_context is None or not is_ssl_error():
+                raise
+        if self.server.shutdown_signal:
+            self.initiate_shutdown()
+        return rv 
+****************************************************************************************************
+
+
+Python BaseHTTPServer.BaseHTTPRequestHandler.version_string() Examples
+
+Example 1
+def version_string(self):
+        return BaseHTTPRequestHandler.version_string(self).strip() 
+****************************************************************************************************
+
+
+Python BaseHTTPServer.BaseHTTPRequestHandler.__init__() Examples
+
+Example 1
+def __init__(self, deviceQueue, deviceName):
+        logging.basicConfig(level=logging.INFO)
+        Thread.__init__(self)
+        self.ser = serial.Serial()
+        self.ser.baudrate = 2400
+        if deviceName != '':
+            self.ser.port = deviceName
+        else:
+            self.ser.port = '/dev/'+self.getTtyDevice()
+        try:
+            self.ser.open()
+            logging.info("Connected to serial device" + self.ser.port)
+        except SerialException:
+            logging.error("Device could not be configured: " + self.ser.port)
+        self.serOpen = True
+        self.deviceQueue = deviceQueue 
+****************************************************************************************************
+
+
+Python http.server.BaseHTTPRequestHandler.handle() Examples
+
+Example 1
+def handle(self):
+        """Handles a request ignoring dropped connections."""
+        rv = None
+        try:
+            rv = BaseHTTPRequestHandler.handle(self)
+        except (socket.error, socket.timeout) as e:
+            self.connection_dropped(e)
+        except Exception:
+            if self.server.ssl_context is None or not is_ssl_error():
+                raise
+        if self.server.shutdown_signal:
+            self.initiate_shutdown()
+        return rv 
+****************************************************************************************************
+
+
+Python http.server.BaseHTTPRequestHandler.version_string() Examples
+
+Example 1
+def version_string(self):
+        return BaseHTTPRequestHandler.version_string(self).strip() 
+****************************************************************************************************
+
+
+Python http.server.BaseHTTPRequestHandler.__init__() Examples
+
+Example 1
+def __init__(self, bakery, auth_location, mutate_error,
+                 caveats, version, expiry, *args):
+        '''
+        @param bakery used to check incoming requests and macaroons
+        for discharge-required errors.
+        @param auth_location holds the location of any 3rd party
+        authorizer. If this is not None, a 3rd party caveat will be
+        added addressed to this location.
+        @param mutate_error if non None, will be called with any
+        discharge-required error before responding to the client.
+        @param caveats called to get caveats to add to the returned
+        macaroon.
+        @param version holds the version of the bakery that the
+        server will purport to serve.
+        @param expiry holds the expiry for the macaroon that will be created
+        in _write_discharge_error
+        '''
+        self._bakery = bakery
+        self._auth_location = auth_location
+        self._mutate_error = mutate_error
+        self._caveats = caveats
+        self._server_version = version
+        self._expiry = expiry
+        BaseHTTPRequestHandler.__init__(self, *args) 
+****************************************************************************************************
+
+
+Python http.server.BaseHTTPRequestHandler.responses() Examples
+
+Example 1
+def handle_get(self):
+        """Handle a single HTTP GET request.
+
+        Default implementation indicates an error because
+        XML-RPC uses the POST method.
+        """
+
+        code = 400
+        message, explain = BaseHTTPRequestHandler.responses[code]
+
+        response = http.server.DEFAULT_ERROR_MESSAGE % \
+            {
+             'code' : code,
+             'message' : message,
+             'explain' : explain
+            }
+        response = response.encode('utf-8')
+        print('Status: %d %s' % (code, message))
+        print('Content-Type: %s' % http.server.DEFAULT_ERROR_CONTENT_TYPE)
+        print('Content-Length: %d' % len(response))
+        print()
+        sys.stdout.flush()
+        sys.stdout.buffer.write(response)
+        sys.stdout.buffer.flush() 
+****************************************************************************************************
+
+
+Python flask._request_ctx_stack.top() Examples
+
+Example 1
+def _get_translations():
+    """Returns the correct gettext translations.
+    Copy from flask-babel with some modifications.
+    """
+    ctx = _request_ctx_stack.top
+    if ctx is None:
+        return None
+    # babel should be in extensions for get_locale
+    if 'babel' not in ctx.app.extensions:
+        return None
+    translations = getattr(ctx, 'wtforms_translations', None)
+    if translations is None:
+        dirname = messages_path()
+        translations = support.Translations.load(
+            dirname, [get_locale()], domain='wtforms'
+        )
+        ctx.wtforms_translations = translations
+    return translations 
+****************************************************************************************************
+
+
+Python flask._request_ctx_stack.pop() Examples
+
+Example 1
+def open(self, *args, **kwargs):
+        kwargs.setdefault('environ_overrides', {}) \
+            ['flask._preserve_context'] = self.preserve_context
+
+        as_tuple = kwargs.pop('as_tuple', False)
+        buffered = kwargs.pop('buffered', False)
+        follow_redirects = kwargs.pop('follow_redirects', False)
+        builder = make_test_environ_builder(self.application, *args, **kwargs)
+
+        return Client.open(self, builder,
+                           as_tuple=as_tuple,
+                           buffered=buffered,
+                           follow_redirects=follow_redirects) 
+****************************************************************************************************
+
+
+Python flask._request_ctx_stack.push() Examples
+
+Example 1
+def __exit__(self, exc_type, exc_value, tb):
+        self.preserve_context = False
+
+        # on exit we want to clean up earlier.  Normally the request context
+        # stays preserved until the next request in the same thread comes
+        # in.  See RequestGlobals.push() for the general behavior.
+        top = _request_ctx_stack.top
+        if top is not None and top.preserved:
+            top.pop() 
+****************************************************************************************************
+
+
+Python werkzeug.wrappers.BaseRequest.environ() Examples
+
+Example 1
+def get_app_iter(self, environ):
+        """Returns the application iterator for the given environ.  Depending
+        on the request method and the current status code the return value
+        might be an empty response rather than the one from the response.
+
+        If the request method is `HEAD` or the status code is in a range
+        where the HTTP specification requires an empty response, an empty
+        iterable is returned.
+
+        .. versionadded:: 0.6
+
+        :param environ: the WSGI environment of the request.
+        :return: a response iterable.
+        """
+        status = self.status_code
+        if environ['REQUEST_METHOD'] == 'HEAD' or \
+           100 <= status < 200 or status in (204, 304):
+            iterable = ()
+        elif self.direct_passthrough:
+            if __debug__:
+                _warn_if_string(self.response)
+            return self.response
+        else:
+            iterable = self.iter_encoded()
+        return ClosingIterator(iterable, self.close) 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.utils.get_netrc_auth() Examples
+
+Example 1
+def __call__(self, req):
+        parsed = urllib_parse.urlparse(req.url)
+
+        # Get the netloc without any embedded credentials
+        netloc = parsed.netloc.rsplit("@", 1)[-1]
+
+        # Set the url of the request to the url without any credentials
+        req.url = urllib_parse.urlunparse(parsed[:1] + (netloc,) + parsed[2:])
+
+        # Use any stored credentials that we have for this netloc
+        username, password = self.passwords.get(netloc, (None, None))
+
+        # Extract credentials embedded in the url if we have none stored
+        if username is None:
+            username, password = self.parse_credentials(parsed.netloc)
+
+        # Get creds from netrc if we still don't have them
+        if username is None and password is None:
+            netrc_auth = get_netrc_auth(req.url)
+            username, password = netrc_auth if netrc_auth else (None, None)
+
+        if username or password:
+            # Store the username and password
+            self.passwords[netloc] = (username, password)
+
+            # Send the basic auth with this request
+            req = HTTPBasicAuth(username or "", password or "")(req)
+
+        # Attach a hook to handle 401 responses
+        req.register_hook("response", self.handle_401)
+
+        return req 
+****************************************************************************************************
+
+
+Python requests.utils.quote() Examples
+
+Example 1
+def getTranslation(sentence):
+    global counter, sourceLang, targetLang
+
+    url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang
+    url = url + "&tl=" + targetLang + "&dt=t&q=" + quote(sentence);
+
+    print('Request# ' + str(counter) + ': ' + url)
+    counter += 1
+
+    page = requests.get(url)
+
+    # strip the response to extract urdu text along with quotes
+    translation = page.content
+    translation = translation[3:]
+    removeLast = 16 + len(sentence)
+    translation = translation[:-removeLast]
+
+    # still has a trailing comma
+    if (translation[-1] == ','):
+        translation = translation[:-1]
+
+    return translation 
+****************************************************************************************************
+
+
+Python requests.utils.get_encoding_from_headers() Examples
+
+Example 1
+def build_response(self, req, resp):
+        response = CachedResponse()
+        response.status_code = getattr(resp, "status", None)
+        response.headers = CaseInsensitiveDict(getattr(resp, "headers", {}))
+        response.encoding = get_encoding_from_headers(response.headers)
+        response.raw = resp
+        response.reason = resp.reason
+
+        if isinstance(req.url, bytes):
+            response.url = req.url.decode("utf-8")
+
+        else:
+            response.url = req.url
+
+        extract_cookies_to_jar(response.cookies, req, resp)
+        response.request = req
+        response.connection = self
+        return response 
+****************************************************************************************************
+
+
+Python requests.utils.to_native_string() Examples
+
+Example 1
+def __call__(self, request):
+        timestamp = str(int(time.time()))
+        message = timestamp + request.method + request.path_url + (request.body or '')
+        secret = self.api_secret
+
+        if not isinstance(message, bytes):
+            message = message.encode()
+        if not isinstance(secret, bytes):
+            secret = secret.encode()
+
+        signature = hmac.new(secret, message, hashlib.sha256).hexdigest()
+        request.headers.update({
+            to_native_string('CB-VERSION'): self.api_version,
+            to_native_string('CB-ACCESS-KEY'): self.api_key,
+            to_native_string('CB-ACCESS-SIGN'): signature,
+            to_native_string('CB-ACCESS-TIMESTAMP'): timestamp,
+        })
+        return request 
+****************************************************************************************************
+
+
+Python requests.utils.dict_from_cookiejar() Examples
+
+Example 1
+def scrape_url(self, url, headers={}, cookies={}, timeout=10):
+        """
+        Scrape the target URL and collects all the data that will be filtered afterwards
+        """
+        if BURP:
+            # Burp flag is set when requests is not installed.
+            # When using Burp we shouldn't end up in this function so we are in a Python CLI env without requests
+            raise ImportError("Missing Requests module")
+        # By default we don't verify SSL certificates, we are only performing some useless GETs
+        try:
+            response = get(url, headers=headers, cookies=cookies, verify=False, allow_redirects=True, timeout=timeout)
+        except RequestException as e:
+            raise ConnectionException(e)
+        # print("status: {}".format(response.status_code))
+
+        # TODO: switch-case for various response.status_code
+
+        self.data['url'] = url
+        self.data['html'] = response.text
+        self.data['headers'] = dict_from_caseinsensitivedict(response.headers)
+        self.data['cookies'] = dict_from_cookiejar(response.cookies)
+        self.parse_html_page() 
+****************************************************************************************************
+
+
+Python bottle.request.json() Examples
+
+Example 1
+def process_raw_msg():
+	if request.method == 'OPTIONS':
+		return {}
+
+	global reqid
+	reqid += 1
+
+	thisreq = reqid
+
+	payload = request.json['payload']
+	payload = msgpack.packb(payload)
+
+	clientmsgsout.append(msgpack.packb((0x08, [payload, thisreq])))
+
+	timeout = time.time() + 10
+
+	while thisreq not in requests:
+		gevent.sleep(0.01)
+		if time.time() > timeout:
+			return abort(504)
+
+	result = requests[thisreq]
+	del requests[thisreq]
+	print result
+	return Response(json.dumps(result), mimetype='application/json') 
+****************************************************************************************************
+
+
+Python bottle.request.get_cookie() Examples
+
+Example 1
+def show(id):
+    try:
+        item = store[int(id)]
+    except (ValueError, KeyError):
+        return redirect('/', 302)
+
+    owner = bool(request.get_cookie('edit-%s' % id, '', secret=SECRET))
+
+    lexer = request.GET.get('as') or item['lexer']
+
+    if lexer == 'ansi':
+        item['html'] = ansi2html(item['raw'])
+    elif lexer == 'json' and 'pretty' in request.GET:
+        try:
+            data = json.dumps(json.loads(item['raw']), sort_keys=True, indent=4)
+            item['html'] = highlight(data, lexer)[0]
+        except ValueError:
+            pass
+    elif lexer != item['lexer']:
+        item['html'] = highlight(item['raw'], lexer)[0]
+
+    return template('show', item=item, owner=owner, lexer=lexer,
+                    lexers=lexerlist(), date=fromepoch(item.get('date', 0))) 
+****************************************************************************************************
+
+
+Python bottle.request.query() Examples
+
+Example 1
+def get_token():
+	# Get JSON Payload
+	try:
+		payload = json.load(request.body)
+		username = payload["username"]
+		password = payload["password"]
+		pwhash = _get_password_hash(password)
+	except:
+		response.status = 400
+		return dict({"message":"No valid JSON found in post body or mandatory fields missing."})
+
+	user_list = rc.scan_iter("USER:*")
+	for user in user_list:
+		user_record = json.loads(rc.get(user))
+		if user_record["username"] == username and user_record["hash"] == pwhash:
+			user_token = _issue_token(user=username, id=user[5:], expiry=token_expiry_seconds)
+			if 'raw' in request.query:
+				return(user_token)
+			else:
+				return(dict(token_type="bearer", access_token=user_token))
+
+	response.status = 401
+	return(dict(info="could not authorize user"))
+
+# Test Auth Token 
+****************************************************************************************************
+
+
+Python bottle.request.method() Examples
+
+Example 1
+def echo():
+    try:
+        body = request.body.read().decode('utf-8')
+    except:
+        body = None
+
+    result = {
+        'method': request.method,
+        'headers': dict(request.headers),
+        'body': body,
+        'files': [
+            {'key': key, 'name': request.files[key].raw_filename}
+            for key in request.files
+        ]
+    }
+
+    return result 
+****************************************************************************************************
+
+
+Python bottle.request.forms() Examples
+
+Example 1
+def process(): 
+    if re.match("^multipart/form-data", request.get_header('Content-Type')):
+        doc = Document(response)
+        # If there are form parameters read them
+        if len(request.forms):
+            doc.from_form(request.forms)
+
+        for name in request.files:
+            f = request.files[name]
+            if f.content_type == 'application/json':
+                doc.from_json(f)
+            elif f.content_type == 'application/svg+xml':
+                t = timeit.default_timer()
+                doc.render_page(f)
+                log.info("Page render time: %f" % (timeit.default_timer() - t))
+                yield doc.flush()
+            else:
+                log.warn("Non SVG/JSON input: %s -> %s" % (name, f.content_type))
+        yield doc.finish() 
+****************************************************************************************************
+
+
+Python bottle.request.environ() Examples
+
+Example 1
+def reset_no_key(*, credentials, env, **ka):
+    success, errors = [], []
+    if credentials:
+        if '@' in credentials:
+            reset = auth.ResetNoKey(email=credentials)
+            type_ = 'email address'
+        else:
+            reset = auth.ResetNoKey(name=credentials)
+            type_ = 'name'
+
+        if reset.good():
+            reset.send(host=request.environ['HTTP_HOST'],
+                       template=env.get_template('email/password-reset.html'))
+            success.append('Roger that. Go check your mailbox.')
+        else:
+            errors.append('Provided {} was not found'.format(type_))
+
+    return {'success': success, 'errors': errors, 'POST': request.POST} 
+****************************************************************************************************
+
+
+Python bottle.request.path() Examples
+
+Example 1
+def WSGIHandler(environ, start_response):
+    """The bottle WSGI-handler."""
+    global request     # 引用全局变量
+    global response
+
+    request.bind(environ)
+    response.bind()
+    ###############################################################################
+
+    try:
+        handler, args = match_url(request.path, request.method)  # 调用,下面定义.
+        if not handler:
+            raise HTTPError(404, "Not found")
+        output = handler(**args)
+    except BreakTheBottle, shard:
+        output = shard.output 
+****************************************************************************************************
+
+
+Python bottle.request.url() Examples
+
+Example 1
+def log_to_logger(fn):
+    '''
+    Wrap a Bottle request so that a log line is emitted after it's handled.
+    (This decorator can be extended to take the desired logger as a param.)
+    '''
+    @wraps(fn)
+    def _log_to_logger(*args, **kwargs):
+        request_time = datetime.datetime.now()
+
+        # modify this to log exactly what you need:
+        logger.info('%s %s %s %s %s' % (request.remote_addr,
+                                        request_time,
+                                        request.method,
+                                        request.url,
+                                        response.status))
+        return fn(*args, **kwargs)
+    return _log_to_logger 
+****************************************************************************************************
+
+
+Python bottle.request.headers() Examples
+
+Example 1
+def echo():
+    try:
+        body = request.body.read().decode('utf-8')
+    except:
+        body = None
+
+    result = {
+        'method': request.method,
+        'headers': dict(request.headers),
+        'body': body,
+        'files': [
+            {'key': key, 'name': request.files[key].raw_filename}
+            for key in request.files
+        ]
+    }
+
+    return result 
+****************************************************************************************************
+
+
+Python bottle.request.POST() Examples
+
+Example 1
+def sign_in(*, current, loggedin, **ka):
+    name, pwd, remember = (request.POST.get(x) for x in ('name', 'pwd', 'remember'))
+    errors = []
+
+    if name and pwd:
+        acct = records.Record(name=name)
+        if not acct.good():
+            errors.append('There\'s no such account')
+        elif not auth.signin(acct, pwd):
+            errors.append('Provided credentials did not match any record')
+        else:
+            ka = {'acct': acct, 'session': not remember}
+            if loggedin: 
+                ka['acid'] = current.acid[0]
+            acid, token = auth.cookies.generate_and_save(**ka)
+
+            if not remember:
+                if loggedin:
+                    max_age = max(current.max_ttl, auth.session_age)
+                else:
+                    max_age = auth.session_age
+            else:
+                # current.max_ttl can't be bigger than auth.cookie_age
+                max_age = auth.cookie_age
+
+            response.set_cookie(domain=request.environ.get('DOTTED_DOMAIN'),
+                                max_age=max_age, name='token'   , value=token, path='/')
+            response.set_cookie(domain=request.environ.get('DOTTED_DOMAIN'),
+                                max_age=max_age, name='acid', value=acid, path='/')
+            redirect('/')
+
+    return {'errors': errors, 'POST': request.POST, 'switch': request.query.switch} 
+****************************************************************************************************
+
+
+Python bottle.request.files() Examples
+
+Example 1
+def echo():
+    try:
+        body = request.body.read().decode('utf-8')
+    except:
+        body = None
+
+    result = {
+        'method': request.method,
+        'headers': dict(request.headers),
+        'body': body,
+        'files': [
+            {'key': key, 'name': request.files[key].raw_filename}
+            for key in request.files
+        ]
+    }
+
+    return result 
+****************************************************************************************************
+
+
+Python requests_cache.install_cache() Examples
+
+Example 1
+def _request(uri, url):
+    """
+    Just a wrapper around the request.get() function
+    """
+
+    one_year = 60 * 60 * 24 * 30 * 12
+
+    cache_name = 'pokeapi_cache_3'
+
+    requests_cache.install_cache(
+        cache_name, backend='sqlite', expire_after=one_year)
+
+    r = requests.get(uri)
+
+    if r.status_code == 200:
+        return _to_json(r.text)
+    else:
+        raise ResourceNotFoundError(
+            'API responded with %s error' % str(r.status_code)) 
+****************************************************************************************************
+
+
+Python requests_cache.CachedSession() Examples
+
+Example 1
+def get_http():
+  """Get the http object."""
+  ensure_dir(CLUSTERFUZZ_TESTCASES_DIR)
+  http = requests_cache.CachedSession(
+      cache_name=os.path.join(CLUSTERFUZZ_TESTCASES_DIR, 'http_cache'),
+      backend='sqlite',
+      allowable_methods=('GET', 'POST'),
+      allowable_codes=[200],
+      expire_after=HTTP_CACHE_TTL)
+  http.mount(
+      'https://',
+      adapters.HTTPAdapter(
+          # backoff_factor is 0.5. Therefore, the max wait time is 16s.
+          retry.Retry(
+              total=5, backoff_factor=0.5,
+              status_forcelist=[500, 502, 503, 504]))
+  )
+  return http 
+****************************************************************************************************
+
+
+Python requests.structures.CaseInsensitiveDict() Examples
+
+Example 1
+def __init__(self, url, method='get', data=None, params=None,
+                 headers=None, content_type='application/json', **kwargs):
+        self.url = url
+        self.method = method
+        self.params = params or {}
+        self.kwargs = kwargs
+
+        if not isinstance(headers, dict):
+            headers = {}
+        self.headers = CaseInsensitiveDict(headers)
+        if content_type:
+            self.headers['Content-Type'] = content_type
+        if data:
+            self.data = json.dumps(data)
+        else:
+            self.data = {} 
+****************************************************************************************************
+
+
+Python requests.compat.urlparse() Examples
+
+Example 1
+def __make_request(self, url, method=u'GET', headers=None, body_string=None, **kwargs):
+
+        # remove retries arg if provided
+        kwargs.pop(u'retries', None)
+
+        path = urlparse(url).path
+
+        # we must parse the query string so we can provide it if it exists so that we can pass it to the
+        # build_vinyldns_request so that it can be properly included in the AWS signing...
+        query = parse_qs(urlsplit(url).query)
+
+        if query:
+            # the problem with parse_qs is that it will return a list for ALL params, even if they are a single value
+            # we need to essentially flatten the params if a param has only one value
+            query = dict((k, v if len(v) > 1 else v[0])
+                         for k, v in iteritems(query))
+
+        signed_headers, signed_body = self.__build_vinyldns_request(method, path, body_string, query,
+                                                                    with_headers=headers or {}, **kwargs)
+
+        response = self.session.request(method, url, data=signed_body, headers=signed_headers, **kwargs)
+
+        return self.__check_response(response, method) 
+****************************************************************************************************
+
+
+Python requests.compat.urljoin() Examples
+
+Example 1
+def list_my_groups(self, group_name_filter=None, start_from=None, max_items=None, **kwargs):
+        """
+        Retrieve my groups.
+
+        :param start_from: the start key of the page; this is the next_id of a prior call
+        :param max_items: the number of groups to return
+        :param group_name_filter: only returns groups whose names contain filter string
+        :return: the content of the response
+        """
+        args = []
+        if group_name_filter:
+            args.append(u'groupNameFilter={0}'.format(group_name_filter))
+        if start_from:
+            args.append(u'startFrom={0}'.format(start_from))
+        if max_items is not None:
+            args.append(u'maxItems={0}'.format(max_items))
+
+        url = urljoin(self.index_url, u'/groups') + u'?' + u'&'.join(args)
+        response, data = self.__make_request(url, u'GET', self.headers, **kwargs)
+
+        return ListGroupsResponse.from_dict(data) 
+****************************************************************************************************
+
+
+Python django.http.request.split_domain_port() Examples
+
+Example 1
+def login_api(request):
+    form = LoginForm(request.POST)
+    if form.is_valid():
+        signature, pubkey = form.cleaned_data.get("signature"), form.cleaned_data.get("pubkey")
+        if not signature or not pubkey:
+            return JsonResponse({'error': _(
+                "Please pass signature and public key"),
+                'success': False})
+        if app_settings.SCATTERAUTH_DOMAIN == '':
+            host = request.get_host()
+            domain, port = split_domain_port(host)
+            msg = domain
+        else:
+            msg = app_settings.SCATTERAUTH_DOMAIN
+        user = authenticate(request, msg=msg, pubkey=pubkey, signature=signature)
+        if user:
+            login(request, user, 'scatterauth.backend.ScatterAuthBackend')
+            return JsonResponse({'success': True, 'redirect_url': get_redirect_url(request)})
+        else:
+            error = _("Can't find a user for the provided signature with public key {pubkey}").format(
+                pubkey=pubkey)
+            return JsonResponse({'success': False, 'error': error})
+    else:
+        return JsonResponse({'success': False, 'error': json.loads(form.errors.as_json())}) 
+****************************************************************************************************
+
+
+Python django.http.request.HttpRequest() Examples
+
+Example 1
+def viewer_login(request: HttpRequest) -> HttpResponse:
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                next_url = request.POST.get('next', 'viewer:main-page')
+                return redirect(next_url)
+            else:
+                return render_error(request, "This account has been disabled.")
+        else:
+            return render_error(request, "Invalid login credentials.")
+    else:
+        next_url = request.GET.get('next', 'viewer:main-page')
+        d = {'next': next_url}
+        return render(request, 'viewer/accounts/login.html', d) 
+****************************************************************************************************
+
+
+Python django.http.request.QueryDict() Examples
+
+Example 1
+def exception_handler(exc, context):
+    # Replace the POST data of the Django request with the parsed
+    # data from the DRF
+    # Necessary because we cannot read request data/stream more than once
+    # This will allow us to see the parsed POST params
+    # in the rollbar exception log
+    # Based on https://github.com/tomchristie/django-rest-framework/pull/1671
+    from rest_framework import views
+    from django.http.request import QueryDict
+    query = QueryDict('', mutable=True)
+    try:
+        if not isinstance(context['request'].data, dict):
+            query.update({'_bulk_data': context['request'].data})
+        else:
+            query.update(context['request'].data)
+        context['request']._request.POST = query
+    except:
+        pass
+    return views.exception_handler(exc, context) 
+****************************************************************************************************
+
+
+Python requests.models.Response() Examples
+
+Example 1
+def test_upload_survey_fail_unexpected_error(self, _, upload_ci):
+        error_response = Response()
+        error_response.status_code = 500
+        error_response.url = url_upload_ci
+        error_message = "fail"
+        error = CiUploadError(logger, error_response, error_message)
+        upload_ci.side_effect = error
+        urls = ['upload_survey', 'upload-survey']
+        for url in urls:
+            with self.subTest(url=url):
+                self.survey_file = dict(file=(io.BytesIO(b'my file contents'), "testfile.xlsx"))
+                response = self.app.post(f'/surveys/{url}?case_id={case["id"]}&business_party_id={business_party["id"]}'
+                                         f'&survey_short_name={survey["shortName"]}', data=self.survey_file)
+
+                self.assertEqual(response.status_code, 302)
+                self.assertTrue('/surveys/upload-failed'.encode() in response.data) 
+****************************************************************************************************
+
+
+Python requests.models.InvalidURL() Examples
+
+Example 1
+def retrying_api_req(service, api_endpoint, access_token, *args, **kwargs):
+    while True:
+        try:
+            response = api_req(service, api_endpoint, access_token, *args,
+                               **kwargs)
+            if response:
+                return response
+            debug('retrying_api_req: api_req returned None, retrying')
+        except (InvalidURL, ConnectionError, DecodeError), e:
+            debug('retrying_api_req: request error ({}), retrying'.format(
+                str(e)))
+        time.sleep(1) 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.util.retry.Retry() Examples
+
+Example 1
+def requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session 
+****************************************************************************************************
+
+
+Python requests_toolbelt.MultipartEncoder() Examples
+
+Example 1
+def _upload_commit_code(project, tarball, description=''):
+    size = os.stat(tarball).st_size
+    click.echo('Uploading {size}...'.format(size=filesizeformat(size)))
+    with open(tarball, 'rb') as tarball_fp:
+        upload = MultipartEncoder({
+            'data': ('data.tgz', tarball_fp, 'application/gzip'),
+            'description': description,
+        })
+        prog = click.progressbar(length=upload.len, width=0)
+        prog.is_hidden = (size < 524288)  # Don't bother with the bar if the upload is small
+        with prog:
+            def callback(upload):
+                prog.pos = upload.bytes_read
+                prog.update(0)  # Step is 0 because we set pos above
+
+            monitor = MultipartEncoderMonitor(upload, callback)
+            commit_obj = request(
+                'post',
+                '/api/v0/projects/{id}/import-package/'.format(id=project.id),
+                data=monitor,
+                headers={'Content-Type': monitor.content_type},
+            ).json()
+    success('Uploaded ad-hoc code {identifier}'.format(identifier=commit_obj['identifier']))
+    return commit_obj 
+****************************************************************************************************
+
+
+Python requests_toolbelt.MultipartEncoderMonitor() Examples
+
+Example 1
+def _upload_commit_code(project, tarball, description=''):
+    size = os.stat(tarball).st_size
+    click.echo('Uploading {size}...'.format(size=filesizeformat(size)))
+    with open(tarball, 'rb') as tarball_fp:
+        upload = MultipartEncoder({
+            'data': ('data.tgz', tarball_fp, 'application/gzip'),
+            'description': description,
+        })
+        prog = click.progressbar(length=upload.len, width=0)
+        prog.is_hidden = (size < 524288)  # Don't bother with the bar if the upload is small
+        with prog:
+            def callback(upload):
+                prog.pos = upload.bytes_read
+                prog.update(0)  # Step is 0 because we set pos above
+
+            monitor = MultipartEncoderMonitor(upload, callback)
+            commit_obj = request(
+                'post',
+                '/api/v0/projects/{id}/import-package/'.format(id=project.id),
+                data=monitor,
+                headers={'Content-Type': monitor.content_type},
+            ).json()
+    success('Uploaded ad-hoc code {identifier}'.format(identifier=commit_obj['identifier']))
+    return commit_obj 
+****************************************************************************************************
+
+
+Python grequests.get() Examples
+
+Example 1
+def get_data(self):
+        idxs = np.arange(len(self.train_list))
+        if self.shuffle:
+            self.rng.shuffle(idxs)
+
+        caches = {}
+        for i, k in enumerate(idxs):
+            path = self.train_list[k]
+            label = self.lb_list[k]
+
+            if i % self.preload == 0:
+                try:
+                    caches = ILSVRCTenth._read_tenth_batch(self.train_list[idxs[i:i+self.preload]])
+                except Exception as e:
+                    logging.warning('tenth local cache failed, err=%s' % str(e))
+
+            content = caches.get(path, '')
+            if not content:
+                content = ILSVRCTenth._read_tenth(path)
+
+            img = cv2.imdecode(np.fromstring(content, dtype=np.uint8), cv2.IMREAD_COLOR)
+            yield [img, label] 
+****************************************************************************************************
+
+
+Python grequests.map() Examples
+
+Example 1
+def download_batch(self, batch, prefix):
+        if self.skip:
+            batch = filter(lambda tile: not os.path.isfile(tile_path(self.tiles_path, prefix, tile['x'], tile['y'])), batch)
+            print('batch_size', len(batch))
+
+        rs = (grequests.get('{0}&key={1}'.format(tile['url'], self.key)) for tile in batch)
+        responses = grequests.map(rs)
+
+        for index in range(len(batch)):
+            response = responses[index]
+            tile = batch[index]
+            if response.status_code == 200:
+                file_name = tile_path(self.tiles_path, prefix, tile['x'], tile['y'])
+                save_response_to(response, file_name)
+            else:
+                print(response.status_code) 
+****************************************************************************************************
+
+
+Python grequests.post() Examples
+
+Example 1
+def whatweb(self):
+        response = requests.get(self.url, verify=False)
+        whatweb_dict = {"url": response.url, "text": response.text,
+                        "headers": dict(response.headers)}
+        whatweb_dict = json.dumps(whatweb_dict)
+        whatweb_dict = whatweb_dict.encode()
+        whatweb_dict = zlib.compress(whatweb_dict)
+        data = {"info": whatweb_dict}
+        result_infos = requests.post("http://whatweb.bugscaner.com/api.go", files=data)
+        content = result_infos.json()
+
+        if "CMS" in content.keys():
+            return content['CMS'][0]
+        elif "Message Boards" in content.keys():
+            return content['Message Boards'][0]
+        else:
+            return '未知CMS'
+
+
+# 漏洞检测 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.disable_warnings() Examples
+
+Example 1
+def __init__(self, host, login, password, timeout=60, port=443,
+                 cacert=None):
+        """Constructor for RIBCLOperations.
+
+        """
+        self.host = host
+        self.login = login
+        self.password = password
+        self.timeout = timeout
+        self.port = port
+        self.cacert = cacert
+
+        # By default, requests logs following message if verify=False
+        #   InsecureRequestWarning: Unverified HTTPS request is
+        #   being made. Adding certificate verification is strongly advised.
+        # Just disable the warning if user intentionally did this.
+        if self.cacert is None:
+            urllib3.disable_warnings(urllib3_exceptions.InsecureRequestWarning) 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.Retry() Examples
+
+Example 1
+def _init_session(self):
+        '''
+        Initializes the requests session
+        '''
+        retries = Retry(
+                    total=int(BurstAPIClient._TOTAL_RETRIES),
+                    status_forcelist=BurstAPIClient._RETRY_STATUS_CODES,
+                    backoff_factor=2,
+                    respect_retry_after_header=True
+        )
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+        self._session = requests.Session()
+        self._session.mount('http://', adapter)
+        self._session.mount('https://', adapter)
+        self._session.headers.update({
+            u'User-Agent': u'pyburstlib Python/%s' % ('.'.join([str(i) for i in sys.version_info][0:3]))
+        }) 
+****************************************************************************************************
+
+
+Python django.utils.six.moves.urllib.request.url2pathname() Examples
+
+Example 1
+def file_path(self, url):
+        """
+        Returns the relative path to the file on disk for the given URL.
+        """
+        relative_url = url[len(self.base_url[2]):]
+        return url2pathname(relative_url) 
+****************************************************************************************************
+
+
+Python django.utils.six.moves.urllib.request.urlretrieve() Examples
+
+Example 1
+def download(self, url):
+        """
+        Downloads the given URL and returns the file name.
+        """
+        def cleanup_url(url):
+            tmp = url.rstrip('/')
+            filename = tmp.split('/')[-1]
+            if url.endswith('/'):
+                display_url = tmp + '/'
+            else:
+                display_url = url
+            return filename, display_url
+
+        prefix = 'django_%s_template_' % self.app_or_project
+        tempdir = tempfile.mkdtemp(prefix=prefix, suffix='_download')
+        self.paths_to_remove.append(tempdir)
+        filename, display_url = cleanup_url(url)
+
+        if self.verbosity >= 2:
+            self.stdout.write("Downloading %s\n" % display_url)
+        try:
+            the_path, info = urlretrieve(url, path.join(tempdir, filename))
+        except IOError as e:
+            raise CommandError("couldn't download URL %s to %s: %s" %
+                               (url, filename, e))
+
+        used_name = the_path.split('/')[-1]
+
+        # Trying to get better name from response headers
+        content_disposition = info.get('content-disposition')
+        if content_disposition:
+            _, params = cgi.parse_header(content_disposition)
+            guessed_filename = params.get('filename') or used_name
+        else:
+            guessed_filename = used_name
+
+        # Falling back to content type guessing
+        ext = self.splitext(guessed_filename)[1]
+        content_type = info.get('content-type')
+        if not ext and content_type:
+            ext = mimetypes.guess_extension(content_type)
+            if ext:
+                guessed_filename += ext
+
+        # Move the temporary file to a filename that has better
+        # chances of being recognized by the archive utils
+        if used_name != guessed_filename:
+            guessed_path = path.join(tempdir, guessed_filename)
+            shutil.move(the_path, guessed_path)
+            return guessed_path
+
+        # Giving up
+        return the_path 
+****************************************************************************************************
+
+
+Python django.contrib.sites.requests.RequestSite() Examples
+
+Example 1
+def oidc(request):
+    """ Inserts OIDC-related values into the context. """
+    global _anonymous_session_state
+
+    if _anonymous_session_state is None and oidc_rp_settings.UNAUTHENTICATED_SESSION_MANAGEMENT_KEY:
+        salt = md5(uuid.uuid4().hex.encode()).hexdigest()
+        browser_state = sha224(
+            oidc_rp_settings.UNAUTHENTICATED_SESSION_MANAGEMENT_KEY.encode('utf-8')).hexdigest()
+        session_state = '{client_id} {origin} {browser_state} {salt}'.format(
+            client_id=oidc_rp_settings.CLIENT_ID,
+            origin='{}://{}'.format(request.scheme, RequestSite(request).domain),
+            browser_state=browser_state, salt=salt)
+        _anonymous_session_state = sha256(session_state.encode('utf-8')).hexdigest() + '.' + salt
+
+    return {
+        'oidc_op_url': oidc_rp_settings.PROVIDER_URL,
+        'oidc_op_endpoint': oidc_rp_settings.PROVIDER_ENDPOINT,
+        'oidc_client_id': oidc_rp_settings.CLIENT_ID,
+        'oidc_anonymous_session_state': _anonymous_session_state,
+    } 
+****************************************************************************************************
+
+
+Python requests.cookies.RequestsCookieJar() Examples
+
+Example 1
+def _handle_basic_auth_401(self, r, kwargs):
+        if self.pos is not None:
+            r.request.body.seek(self.pos)
+
+        # Consume content and release the original connection
+        # to allow our new request to reuse the same one.
+        r.content
+        r.raw.release_conn()
+        prep = r.request.copy()
+        if not hasattr(prep, '_cookies'):
+            prep._cookies = cookies.RequestsCookieJar()
+        cookies.extract_cookies_to_jar(prep._cookies, r.request, r.raw)
+        prep.prepare_cookies(prep._cookies)
+
+        self.auth = auth.HTTPBasicAuth(self.username, self.password)
+        prep = self.auth(prep)
+        _r = r.connection.send(prep, **kwargs)
+        _r.history.append(r)
+        _r.request = prep
+
+        return _r 
+****************************************************************************************************
+
+
+Python requests.cookies.cookiejar_from_dict() Examples
+
+Example 1
+def _hello(self):
+        log.debug('_hello ...')
+
+        # a new session is required for the app_token
+        self.session.http.cookies = cookiejar_from_dict({})
+        res = self.session.http.get(self.base_url)
+        match = self._app_token_re.search(res.text)
+
+        app_token = match.group(1)
+        hello_url = self.API_HELLO.format(self.base_url)
+
+        if self._uuid:
+            __uuid = self._uuid
+        else:
+            __uuid = str(uuid.uuid4())
+            self._session_attributes.set(
+                'uuid', __uuid, expires=self.TIME_SESSION)
+
+        params = {
+            'client_app_token': app_token,
+            'uuid': __uuid,
+            'lang': 'en',
+            'format': 'json'
+        }
+        res = self.session.http.post(hello_url, headers=self.headers, data=params) 
+****************************************************************************************************
+
+
+Python botocore.vendored.requests.get() Examples
+
+Example 1
+def _get_response(self, full_url, headers, timeout):
+        try:
+            response = self._session.get(full_url, headers=headers,
+                                         timeout=timeout)
+            if response.status_code != 200:
+                raise MetadataRetrievalError(
+                    error_msg="Received non 200 response (%s) from ECS metadata: %s"
+                    % (response.status_code, response.text))
+            try:
+                return json.loads(response.text)
+            except ValueError:
+                raise MetadataRetrievalError(
+                    error_msg=("Unable to parse JSON returned from "
+                               "ECS metadata: %s" % response.text))
+        except RETRYABLE_HTTP_ERRORS as e:
+            error_msg = ("Received error when attempting to retrieve "
+                         "ECS metadata: %s" % e)
+            raise MetadataRetrievalError(error_msg=error_msg) 
+****************************************************************************************************
+
+
+Python botocore.vendored.requests.Session() Examples
+
+Example 1
+def __init__(self, session=None, sleep=time.sleep):
+        if session is None:
+            session = requests.Session()
+        self._session = session
+        self._sleep = sleep 
+****************************************************************************************************
+
+
+Python botocore.vendored.requests.Timeout() Examples
+
+Example 1
+def run(self):
+        sqs = get_boto_session().resource('sqs')
+        queue = sqs.get_queue_by_name(QueueName=settings.SQS_QUEUE_NAME)
+        workerLogger.info("SQS Queue- %s" % str(queue))
+        receive_params = self.init_receive_params()
+        while not _SQSWorkerShutdownEvent.is_set():
+            workerLogger.debug("Waiting between SQS requests for %d seconds" % settings.SQS_WAIT_BETWEEN_REQUESTS)
+            time.sleep(settings.SQS_WAIT_BETWEEN_REQUESTS)
+            workerLogger.debug("Connecting to SQS to receive messages with params %s" % str(receive_params))
+            try:
+                for message in queue.receive_messages(**receive_params):
+                    workerLogger.info(message.body)
+                    self.messageQueue.put(message)
+                    if settings.SQS_MESSAGE_DELETE_POLICY == "immediate":
+                        message.delete()
+                        workerLogger.debug("Message deleted according to policy '%s'" % str(settings.SQS_MESSAGE_DELETE_POLICY))
+            except (ConnectionError, Timeout) as exc:
+                workerLogger.exception("Connection to queue failed. Retrying in %d seconds. Original exception: " % settings.RECONNECT_WAIT_TIME)
+                time.sleep(settings.RECONNECT_WAIT_TIME)
+
+        if _SQSWorkerShutdownEvent.is_set():
+            workerLogger.info('Exiting...') 
+****************************************************************************************************
+
+
+Python botocore.vendored.requests.post() Examples
+
+Example 1
+def handleOffer(context, event):
+    header = event['directive']['header']
+    offer = event['directive']['payload']['offer']
+    r = requests.post(local_server_host+'/skill', json=offer)
+    answer =  r.json()
+    header['name'] = 'AnswerGeneratedForSession'
+    resp = {
+    "event": {
+        "header": header,
+        "endpoint": {
+            "endpointId" : "browser-001",
+        },
+        "payload": {
+            "answer": {
+                "format" : "SDP",
+                "value" : answer['sdp']
+            }
+        }
+      } 
+    }
+    return resp 
+****************************************************************************************************
+
+
+Python botocore.vendored.requests.ConnectionError() Examples
+
+Example 1
+def run(self):
+        sqs = get_boto_session().resource('sqs')
+        queue = sqs.get_queue_by_name(QueueName=settings.SQS_QUEUE_NAME)
+        workerLogger.info("SQS Queue- %s" % str(queue))
+        receive_params = self.init_receive_params()
+        while not _SQSWorkerShutdownEvent.is_set():
+            workerLogger.debug("Waiting between SQS requests for %d seconds" % settings.SQS_WAIT_BETWEEN_REQUESTS)
+            time.sleep(settings.SQS_WAIT_BETWEEN_REQUESTS)
+            workerLogger.debug("Connecting to SQS to receive messages with params %s" % str(receive_params))
+            try:
+                for message in queue.receive_messages(**receive_params):
+                    workerLogger.info(message.body)
+                    self.messageQueue.put(message)
+                    if settings.SQS_MESSAGE_DELETE_POLICY == "immediate":
+                        message.delete()
+                        workerLogger.debug("Message deleted according to policy '%s'" % str(settings.SQS_MESSAGE_DELETE_POLICY))
+            except (ConnectionError, Timeout) as exc:
+                workerLogger.exception("Connection to queue failed. Retrying in %d seconds. Original exception: " % settings.RECONNECT_WAIT_TIME)
+                time.sleep(settings.RECONNECT_WAIT_TIME)
+
+        if _SQSWorkerShutdownEvent.is_set():
+            workerLogger.info('Exiting...') 
+****************************************************************************************************
+
+
+Python botocore.vendored.requests.put() Examples
+
+Example 1
+def send_cf_response(event, context, response_status, response_data, physical_resource_id, reason=None):
+    """
+    Sends a response back to CloudFormation with the result of the resource operation.
+
+    For more information on the request object see:
+    https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
+    """
+    response_url = event["ResponseURL"]
+
+    response = {
+        "Status": response_status,
+        "Reason": reason or "See the details in CloudWatch Log Stream: " + context.log_stream_name,
+        "PhysicalResourceId": physical_resource_id,
+        "StackId": event["StackId"],
+        "RequestId": event["RequestId"],
+        "LogicalResourceId": event["LogicalResourceId"],
+        "NoEcho": False,
+        "Data": response_data
+    }
+
+    print("Responding to CloudFormation with", response)
+    cf_response = requests.put(response_url, json=response, headers={"content-type": ""})
+    print("CloudFormation result:", cf_response.reason, cf_response.text) 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.poolmanager.PoolManager() Examples
+
+Example 1
+def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
+        self.poolmanager = PoolManager(num_pools=connections,
+                                       maxsize=maxsize,
+                                       block=block,
+                                       assert_hostname=False, **pool_kwargs) 
+****************************************************************************************************
+
+
+Python rest_framework.request.Request() Examples
+
+Example 1
+def create(self, request: Request, *args: Any, **kwargs: Any):
+        if "student" in request.data:
+            if (
+                str(request.user.id) == request.data.get("student")
+                or request.user.is_admin
+            ):
+                return super().create(request)
+            else:
+                return HttpResponseBadRequest()
+
+        if not request.user.is_student:
+            return HttpResponseBadRequest()
+        # todo check is student
+        request.data["student"] = request.user.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers) 
+****************************************************************************************************
+
+
+Python requests.codes.ok() Examples
+
+Example 1
+def test_get_all_drives(self):
+        with requests_mock.Mocker() as mock:
+            def callback(request, context):
+                response_drives = [get_data('drive.json'), get_data('drive.json')]
+                ids = [str(i) for i in range(0, 2)]
+                for d in response_drives:
+                    d['id'] = ids.pop(0)
+                context.status_code = codes.ok
+                return {'value': response_drives}
+
+            mock.get(self.account.client.API_URI + '/drives', json=callback)
+            all_drives = self.root.get_all_drives()
+            all_ids = [str(i) for i in range(0, 2)]
+            for i, x in all_drives.items():
+                self.assertIn(i, all_ids)
+                self.assertIsInstance(x, drives.DriveObject)
+                all_ids.remove(i)
+            self.assertEqual(0, len(all_ids)) 
+****************************************************************************************************
+
+
+Python requests.sessions.Session() Examples
+
+Example 1
+def create_scraper(cls, sess=None, **kwargs):
+        """
+        Convenience function for creating a ready-to-go requests.Session (subclass) object.
+        """
+        scraper = cls()
+
+        if sess:
+            attrs = ["auth", "cert", "cookies", "headers", "hooks", "params", "proxies", "data"]
+            for attr in attrs:
+                val = getattr(sess, attr, None)
+                if val:
+                    setattr(scraper, attr, val)
+
+        return scraper
+
+    ## Functions for integrating cloudflare-scrape with other applications and scripts 
+****************************************************************************************************
+
+
+Python requests_aws4auth.AWS4Auth() Examples
+
+Example 1
+def connection_to_es(es_host, es_port, aws=False):
+    args = {}
+
+    cred = get_credentials()
+    access_key = cred['AccessKeyId']
+    secret_access = cred['SecretAccessKey']
+    token = cred['Token']
+    region = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
+    awsauth = AWS4Auth(access_key, secret_access, region, 'es',
+                       session_token=token)
+
+    args = {
+        'http_auth': awsauth,
+        'use_ssl': True,
+        'verify_certs': True,
+        'connection_class': RequestsHttpConnection
+    }
+
+    es = Elasticsearch(hosts=[{
+        'host': es_host,
+        'port': es_port
+    }], **args)
+
+    return es 
+****************************************************************************************************
+
+
+Python django.core.signals.request_finished.connect() Examples
+
+Example 1
+def tick(self):
+        request_finished.connect(self.request_processed)
+        self.update_watches()
+        while True:
+            if self.processed_request.is_set():
+                self.update_watches()
+                self.processed_request.clear()
+            try:
+                self.client.receive()
+            except pywatchman.WatchmanError as ex:
+                self.check_server_status(ex)
+            else:
+                for sub in list(self.client.subs.keys()):
+                    self._check_subscription(sub)
+            yield 
+****************************************************************************************************
+
+
+Python django.core.signals.request_started.connect() Examples
+
+Example 1
+def __exit__(self, exc_type, exc_value, traceback):
+        self.connection.force_debug_cursor = self.force_debug_cursor
+        request_started.connect(reset_queries)
+        if exc_type is not None:
+            return
+        self.final_queries = len(self.connection.queries_log) 
+****************************************************************************************************
+
+
+Python django.core.signals.request_started.disconnect() Examples
+
+Example 1
+def __enter__(self):
+        self.force_debug_cursor = self.connection.force_debug_cursor
+        self.connection.force_debug_cursor = True
+        self.initial_queries = len(self.connection.queries_log)
+        self.final_queries = None
+        request_started.disconnect(reset_queries)
+        return self 
+****************************************************************************************************
+
+
+Python requests_toolbelt.multipart.encoder.MultipartEncoder() Examples
+
+Example 1
+def upload_large_file(self, file_path, **kwargs):
+            """Method that uses Multipartencoder to upload large files without running out of memory"""
+            response = self.upload_link(**kwargs)
+            upload_url = response['url']
+
+            _, file_name = os.path.split(file_path)
+
+            with open(file_path, 'rb') as upload_file:
+                data = encoder.MultipartEncoder({
+                    "files": (file_name, upload_file, "application/octet-stream"),
+                })
+
+                headers = {"Prefer": "respond-async", "Content-Type": data.content_type}
+                response_json = requests.post(upload_url, headers=headers, data=data).json()
+
+            self._check_status(response_json)
+            return response_json['result'] 
+****************************************************************************************************
+
+
+Python requests_futures.sessions.FuturesSession() Examples
+
+Example 1
+def __init__(self, server, authname, authpassword, authtoken, project_id=1,
+                 max_threads=100, make_global=True, caching=True):
+        # Catch too many backslashes
+        if server.endswith('/'):
+            server = server[:-1]
+
+        self.server = server
+        self.project_id = project_id
+        self._authname = authname
+        self._authpassword = authpassword
+        self._authtoken = authtoken
+        self.__max_threads = max_threads
+
+        self.caching = caching
+        self._cache = cache.Cache(size_limit=128)
+
+        self._session = requests.Session()
+        self._future_session = FuturesSession(session=self._session,
+                                              max_workers=self.max_threads)
+
+        self.update_credentials()
+
+        if make_global:
+            self.make_global() 
+****************************************************************************************************
+
+
+Python botocore.vendored.requests.exceptions.ConnectionError() Examples
+
+Example 1
+def _get_response(self, request, operation_model, attempts):
+        # This will return a tuple of (success_response, exception)
+        # and success_response is itself a tuple of
+        # (http_response, parsed_dict).
+        # If an exception occurs then the success_response is None.
+        # If no exception occurs then exception is None.
+        try:
+            logger.debug("Sending http request: %s", request)
+            http_response = self.http_session.send(
+                request, verify=self.verify,
+                stream=operation_model.has_streaming_output,
+                proxies=self.proxies, timeout=self.timeout)
+        except ConnectionError as e:
+            # For a connection error, if it looks like it's a DNS
+            # lookup issue, 99% of the time this is due to a misconfigured
+            # region/endpoint so we'll raise a more specific error message
+            # to help users.
+            logger.debug("ConnectionError received when sending HTTP request.",
+                         exc_info=True)
+            if self._looks_like_dns_error(e):
+                endpoint_url = e.request.url
+                better_exception = EndpointConnectionError(
+                    endpoint_url=endpoint_url, error=e)
+                return (None, better_exception)
+            else:
+                return (None, e)
+        except Exception as e:
+            logger.debug("Exception received when sending HTTP request.",
+                         exc_info=True)
+            return (None, e)
+        # This returns the http_response and the parsed_data.
+        response_dict = convert_to_response_dict(http_response,
+                                                 operation_model)
+        parser = self._response_parser_factory.create_parser(
+            operation_model.metadata['protocol'])
+        return ((http_response, parser.parse(response_dict,
+                                             operation_model.output_shape)),
+                None) 
+****************************************************************************************************
+
+
+Python tornado.web.RequestHandler.SUPPORTED_METHODS() Examples
+
+Example 1
+def other(self):
+            # Even though this method exists, it won't get called automatically
+            # because it is not in SUPPORTED_METHODS.
+            self.write('other') 
+****************************************************************************************************
+
+
+Python tornado.web.RequestHandler.log_exception() Examples
+
+Example 1
+def log_exception(self, typ, value, tb):
+            if isinstance(value, PermissionError):
+                app_log.warning('custom logging for PermissionError: %s',
+                                value.args[0])
+            else:
+                RequestHandler.log_exception(self, typ, value, tb) 
+****************************************************************************************************
+
+
+Python tornado.web.RequestHandler.write_error() Examples
+
+Example 1
+def get_handlers(self):
+        class DefaultHandler(RequestHandler):
+            def get(self):
+                if self.get_argument("status", None):
+                    raise HTTPError(int(self.get_argument("status")))
+                1 / 0
+
+        class WriteErrorHandler(RequestHandler):
+            def get(self):
+                if self.get_argument("status", None):
+                    self.send_error(int(self.get_argument("status")))
+                else:
+                    1 / 0
+
+            def write_error(self, status_code, **kwargs):
+                self.set_header("Content-Type", "text/plain")
+                if "exc_info" in kwargs:
+                    self.write("Exception: %s" % kwargs["exc_info"][0].__name__)
+                else:
+                    self.write("Status: %d" % status_code)
+
+        class FailedWriteErrorHandler(RequestHandler):
+            def get(self):
+                1 / 0
+
+            def write_error(self, status_code, **kwargs):
+                raise Exception("exception in write_error")
+
+        return [url("/default", DefaultHandler),
+                url("/write_error", WriteErrorHandler),
+                url("/failed_write_error", FailedWriteErrorHandler),
+                ] 
+****************************************************************************************************
+
+
+Python tornado.web.RequestHandler.get_template_namespace() Examples
+
+Example 1
+def get_handlers(self):
+        class CurrentUserHandler(RequestHandler):
+            def prepare(self):
+                self.has_loaded_current_user = False
+
+            def get_current_user(self):
+                self.has_loaded_current_user = True
+                return ''
+
+        class WithoutUserHandler(CurrentUserHandler):
+            def get(self):
+                self.render_string('without_user.html')
+                self.finish(str(self.has_loaded_current_user))
+
+        class WithUserHandler(CurrentUserHandler):
+            def get(self):
+                self.render_string('with_user.html')
+                self.finish(str(self.has_loaded_current_user))
+
+        class CurrentUserModuleHandler(CurrentUserHandler):
+            def get_template_namespace(self):
+                # If RequestHandler.get_template_namespace is called, then
+                # get_current_user is evaluated. Until #820 is fixed, this
+                # is a small hack to circumvent the issue.
+                return self.ui
+
+        class WithoutUserModuleHandler(CurrentUserModuleHandler):
+            def get(self):
+                self.render_string('without_user_module.html')
+                self.finish(str(self.has_loaded_current_user))
+
+        class WithUserModuleHandler(CurrentUserModuleHandler):
+            def get(self):
+                self.render_string('with_user_module.html')
+                self.finish(str(self.has_loaded_current_user))
+
+        return [('/without_user', WithoutUserHandler),
+                ('/with_user', WithUserHandler),
+                ('/without_user_module', WithoutUserModuleHandler),
+                ('/with_user_module', WithUserModuleHandler)] 
+****************************************************************************************************
+
+
+Python botocore.awsrequest.AWSRequest() Examples
+
+Example 1
+def post_data_to_es(payload, region, creds, host, path, method='POST', proto='https://'):
+        '''Post data to ES endpoint with SigV4 signed http headers'''
+        """
+        Low-level POST data to Amazon Elasticsearch Service generating a Sigv4 signed request
+
+        :param payload:
+        :param region:
+        :param creds:
+        :param host:
+        :param path:
+        :param method:
+        :param proto:
+        :return:
+        """
+        req = AWSRequest(method=method,
+                         url=proto + host + urllib.quote(path),
+                         data=payload,
+                         headers={'Host': host})
+        SigV4Auth(creds, 'es', region).add_auth(req)
+        http_session = BotocoreHTTPSession()
+        res = http_session.send(req.prepare())
+        if 200 <= res.status_code <= 299:
+            return res._content
+        else:
+            raise ESException(res.status_code, res._content) 
+****************************************************************************************************
+
+
+Python botocore.awsrequest.create_request_object() Examples
+
+Example 1
+def generate_presigned_url(self, request_dict, operation_name,
+                               expires_in=3600, region_name=None,
+                               signing_name=None):
+        """Generates a presigned url
+
+        :type request_dict: dict
+        :param request_dict: The prepared request dictionary returned by
+            ``botocore.awsrequest.prepare_request_dict()``
+
+        :type operation_name: str
+        :param operation_name: The operation being signed.
+
+        :type expires_in: int
+        :param expires_in: The number of seconds the presigned url is valid
+            for. By default it expires in an hour (3600 seconds)
+
+        :type region_name: string
+        :param region_name: The region name to sign the presigned url.
+
+        :type signing_name: str
+        :param signing_name: The name to use for the service when signing.
+
+        :returns: The presigned url
+        """
+        request = create_request_object(request_dict)
+        self.sign(operation_name, request, region_name,
+                  'presign-url', expires_in, signing_name)
+
+        request.prepare()
+        return request.url 
+****************************************************************************************************
+
+
+Python pip._vendor.requests.compat.IncompleteRead() Examples
+
+Example 1
+def _download_url(resp, link, temp_location):
+    fp = open(temp_location, 'wb')
+    download_hash = None
+    if link.hash and link.hash_name:
+        try:
+            download_hash = hashlib.new(link.hash_name)
+        except ValueError:
+            logger.warn("Unsupported hash name %s for package %s" % (link.hash_name, link))
+    try:
+        total_length = int(resp.headers['content-length'])
+    except (ValueError, KeyError, TypeError):
+        total_length = 0
+    downloaded = 0
+    show_progress = total_length > 40 * 1000 or not total_length
+    show_url = link.show_url
+    try:
+        if show_progress:
+            ## FIXME: the URL can get really long in this message:
+            if total_length:
+                logger.start_progress('Downloading %s (%s): ' % (show_url, format_size(total_length)))
+            else:
+                logger.start_progress('Downloading %s (unknown size): ' % show_url)
+        else:
+            logger.notify('Downloading %s' % show_url)
+        logger.info('Downloading from URL %s' % link)
+
+        def resp_read(chunk_size):
+            try:
+                # Special case for urllib3.
+                try:
+                    for chunk in resp.raw.stream(
+                            chunk_size, decode_content=False):
+                        yield chunk
+                except IncompleteRead as e:
+                    raise ChunkedEncodingError(e)
+            except AttributeError:
+                # Standard file-like object.
+                while True:
+                    chunk = resp.raw.read(chunk_size)
+                    if not chunk:
+                        break
+                    yield chunk
+
+        for chunk in resp_read(4096):
+            downloaded += len(chunk)
+            if show_progress:
+                if not total_length:
+                    logger.show_progress('%s' % format_size(downloaded))
+                else:
+                    logger.show_progress('%3i%%  %s' % (100 * downloaded / total_length, format_size(downloaded)))
+            if download_hash is not None:
+                download_hash.update(chunk)
+            fp.write(chunk)
+        fp.close()
+    finally:
+        if show_progress:
+            logger.end_progress('%s downloaded' % format_size(downloaded))
+    return download_hash 
+****************************************************************************************************
+
+
+Python requests_kerberos.HTTPKerberosAuth() Examples
+
+Example 1
+def setAuthMethod(self, auth_method):
+        "Set the authentication method to use for the requests."
+        self.auth_method = auth_method
+        if len(self.auth_credentials) == 2:
+            username, password = self.auth_credentials
+            if self.auth_method == "basic":
+                from requests.auth import HTTPBasicAuth
+                self.h.auth = HTTPBasicAuth(username, password)
+            elif self.auth_method == "digest":
+                from requests.auth import HTTPDigestAuth
+                self.h.auth = HTTPDigestAuth(username, password)
+            elif self.auth_method == "ntlm":
+                from requests_ntlm import HttpNtlmAuth
+                self.h.auth = HttpNtlmAuth(username, password)
+        elif self.auth_method == "kerberos":
+            from requests_kerberos import HTTPKerberosAuth
+            self.h.auth = HTTPKerberosAuth() 
+****************************************************************************************************
+
+
+Python requests_kerberos.OPTIONAL() Examples
+
+Example 1
+def test_handle_response_200_mutual_auth_optional_hard_failure(self):
+        with patch(kerberos_module_name+'.authGSSClientStep', clientStep_error):
+
+            response_ok = requests.Response()
+            response_ok.url = "http://www.example.org/"
+            response_ok.status_code = 200
+            response_ok.headers = {
+                'www-authenticate': 'negotiate servertoken',
+                'authorization': 'Negotiate GSSRESPONSE'}
+
+            auth = requests_kerberos.HTTPKerberosAuth(
+                requests_kerberos.OPTIONAL)
+            auth.context = {"www.example.org": "CTX"}
+
+            self.assertRaises(requests_kerberos.MutualAuthenticationError,
+                              auth.handle_response,
+                              response_ok)
+
+            clientStep_error.assert_called_with("CTX", "servertoken") 
+****************************************************************************************************
+
+
+Python future.backports.http.server.BaseHTTPRequestHandler.responses() Examples
+
+Example 1
+def handle_get(self):
+        """Handle a single HTTP GET request.
+
+        Default implementation indicates an error because
+        XML-RPC uses the POST method.
+        """
+
+        code = 400
+        message, explain = BaseHTTPRequestHandler.responses[code]
+
+        response = http_server.DEFAULT_ERROR_MESSAGE % \
+            {
+             'code' : code,
+             'message' : message,
+             'explain' : explain
+            }
+        response = response.encode('utf-8')
+        print('Status: %d %s' % (code, message))
+        print('Content-Type: %s' % http_server.DEFAULT_ERROR_CONTENT_TYPE)
+        print('Content-Length: %d' % len(response))
+        print()
+        sys.stdout.flush()
+        sys.stdout.buffer.write(response)
+        sys.stdout.buffer.flush() 
+****************************************************************************************************
+
+
+Python future.backports.http.server.BaseHTTPRequestHandler.log_request() Examples
+
+Example 1
+def log_request(self, code='-', size='-'):
+        """Selectively log an accepted request."""
+
+        if self.server.logRequests:
+            BaseHTTPRequestHandler.log_request(self, code, size) 
+****************************************************************************************************
+
+
+Python requests.packages.urllib3.util.Retry() Examples
+
+Example 1
+def test_stream_logs_not_decoded(self, caplog):
+        flexmock(Retry).new_instances(fake_retry)
+        server = Openshift('http://apis/', 'http://oauth/authorize',
+                           k8s_api_url='http://api/v1/')
+
+        logs = (
+            u'Lógs'.encode('utf-8'),
+            u'Lðgs'.encode('utf-8'),
+        )
+
+        fake_response = flexmock(status_code=http_client.OK, headers={})
+
+        (fake_response
+            .should_receive('iter_lines')
+            .and_yield(*logs)
+            .with_args(decode_unicode=False))
+
+        (flexmock(requests)
+            .should_receive('request')
+            .and_return(fake_response))
+
+        with caplog.at_level(logging.ERROR):
+            for result in server.stream_logs('anything'):
+                assert isinstance(result, six.binary_type) 
+****************************************************************************************************
+
+
+Python openerp.http.request.env() Examples
+
+Example 1
+def books(self):
+        records = request.env['library.book'].sudo().search([])
+        result = '<html><body><table><tr><td>'
+        result += '</td></tr><tr><td>'.join(records.mapped('name'))
+        result += '</td></tr></table></body></html>'
+        # return request.make_response(
+        #     result, [
+        #         ('Last-modified', email.utils.formatdate(
+        #             (
+        #                 fields.Datetime.from_string(
+        #                 request.env['library.book'].sudo()
+        #                 .search([], order='write_date desc', limit=1)
+        #                 .write_date) -
+        #                 datetime.datetime(1970, 1, 1)
+        #             ).total_seconds(),
+        #             usegmt=True)),
+        #     ])
+        return result
+
+    # test this with
+    # curl -i -X POST -H "Content-Type: application/json" -d {} $URL 
+****************************************************************************************************
+
+
+Python openerp.http.request.registry() Examples
+
+Example 1
+def __init__(self, xmlid, debug=False, cr=None, uid=None, context=None, registry=None):
+        self.xmlid = xmlid
+        self.cr = request.cr if cr is None else cr
+        self.uid = request.uid if uid is None else uid
+        self.context = request.context if context is None else context
+        self.registry = request.registry if registry is None else registry
+        self.javascripts = []
+        self.stylesheets = []
+        self.css_errors = []
+        self.remains = []
+        self._checksum = None
+
+        context = self.context.copy()
+        context['inherit_branding'] = False
+        context['rendering_bundle'] = True
+        self.html = self.registry['ir.ui.view'].render(self.cr, self.uid, xmlid, context=context)
+        self.parse() 
+****************************************************************************************************
+
+
+Python openerp.http.request.uid() Examples
+
+Example 1
+def render(self, cr, uid, id_or_xml_id, qwebcontext=None, loader=None, context=None):
+        """ render(cr, uid, id_or_xml_id, qwebcontext=None, loader=None, context=None)
+
+        Renders the template specified by the provided template name
+
+        :param qwebcontext: context for rendering the template
+        :type qwebcontext: dict or :class:`QWebContext` instance
+        :param loader: if ``qwebcontext`` is a dict, loader set into the
+                       context instantiated for rendering
+        """
+        if qwebcontext is None:
+            qwebcontext = {}
+
+        if not isinstance(qwebcontext, QWebContext):
+            qwebcontext = QWebContext(cr, uid, qwebcontext, loader=loader, context=context)
+
+        qwebcontext['__template__'] = id_or_xml_id
+        stack = qwebcontext.get('__stack__', [])
+        if stack:
+            qwebcontext['__caller__'] = stack[-1]
+        stack.append(id_or_xml_id)
+        qwebcontext['__stack__'] = stack
+        qwebcontext['xmlid'] = str(stack[0]) # Temporary fix
+        return self.render_node(self.get_template(id_or_xml_id, qwebcontext), qwebcontext) 
+****************************************************************************************************
+
+
+Python openerp.http.request.cr() Examples
+
+Example 1
+def render(self, cr, uid, id_or_xml_id, qwebcontext=None, loader=None, context=None):
+        """ render(cr, uid, id_or_xml_id, qwebcontext=None, loader=None, context=None)
+
+        Renders the template specified by the provided template name
+
+        :param qwebcontext: context for rendering the template
+        :type qwebcontext: dict or :class:`QWebContext` instance
+        :param loader: if ``qwebcontext`` is a dict, loader set into the
+                       context instantiated for rendering
+        """
+        if qwebcontext is None:
+            qwebcontext = {}
+
+        if not isinstance(qwebcontext, QWebContext):
+            qwebcontext = QWebContext(cr, uid, qwebcontext, loader=loader, context=context)
+
+        qwebcontext['__template__'] = id_or_xml_id
+        stack = qwebcontext.get('__stack__', [])
+        if stack:
+            qwebcontext['__caller__'] = stack[-1]
+        stack.append(id_or_xml_id)
+        qwebcontext['__stack__'] = stack
+        qwebcontext['xmlid'] = str(stack[0]) # Temporary fix
+        return self.render_node(self.get_template(id_or_xml_id, qwebcontext), qwebcontext) 
+****************************************************************************************************
+
+
+Python twisted.web.http.Request.__init__() Examples
+
+Example 1
+def __init__(self, host, port, path, reactor=reactor):
+        """
+        @param host: the host of the web server to proxy.
+        @type host: C{str}
+
+        @param port: the port of the web server to proxy.
+        @type port: C{port}
+
+        @param path: the base path to fetch data from. Note that you shouldn't
+            put any trailing slashes in it, it will be added automatically in
+            request. For example, if you put B{/foo}, a request on B{/bar} will
+            be proxied to B{/foo/bar}.  Any required encoding of special
+            characters (such as " " or "/") should have been done already.
+
+        @type path: C{str}
+        """
+        Resource.__init__(self)
+        self.host = host
+        self.port = port
+        self.path = path
+        self.reactor = reactor 
+****************************************************************************************************
+
