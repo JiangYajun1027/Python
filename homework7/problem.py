@@ -56,41 +56,55 @@ def geturl2(url):
     except Exception as e:
         print(e)
 
-def getcon(lis):        
-    data = []
-    
-    headers = {	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3724.8 Safari/537.36'}
-    for x in lis:
-        test = requests.get(x,headers=headers,timeout = 30).content.decode('utf-8')
-        soup = BeautifulSoup(test,'html.parser')
+def getcon(lis):
+    try:        
+        data = []
         dict = {}
+        headers = {	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3724.8 Safari/537.36'}
+        for x in lis:
+            test = requests.get(x,headers=headers,timeout = 30).content.decode('utf-8')
+            soup = BeautifulSoup(test,'html.parser')
 
-        # 查找标题
-        dict['title'] = soup.find(id='main').h1.text
-        print(dict['title'])
+            # 查找标题
+            dict['title'] = soup.find(id='main').h1.text
+            print(dict['title'])
+            
+            # 查找example序号
+            dict['Order'] = soup.find(style="margin:20px 2px; color:#424345; font-weight:bold;").text
+            print(dict['Order'])
 
-        # # 查找题目
-        # dict['tm'] = soup_test.find(id='content').find_all('p')[1].text
-        # # print(title)
+            # 查找Project
+            # dict['Project'] = soup.find(id='main').find_all('span')[1].text
+            # print(dict['Project'])
 
-        # # 查找程序分析
-        # dict['cxfx'] = soup_test.find(id='content').find_all('p')[2].text
-        # # print(cxfx)
+            # 查找Author
+            # dict['Author'] = soup.find(id='content').find_all('p')[2].text
+            # print(dict['Author'])
+            
+            # 查找File
+            # dict['File'] = soup.find(id='content').find_all('p')[2].text
+            # print(dict['File'])
 
-        # # 程序源代码
-        # #这里的异常处理是因为有一部分练习实例存放的位置不一样，然后进行异常处理，不同的情况不一样，根据自己的情况而定！
-        # try:
-        #     dict['code'] = soup_test.find(class_="hl-main").text
-        # except Exception as e:
-        #     dict['code'] = soup_test.find('pre').text
-        # # print(code)
-        # # print(dict)
+            # 程序源代码
+            #这里的异常处理是因为有一部分练习实例存放的位置不一样，然后进行异常处理，不同的情况不一样，根据自己的情况而定！
+            try:
+                dict['code'] = soup.find('pre',class_="prettyprint").text
+            except Exception as e:
+                print(e)
+            print(dict['code'])
+            # print(dict)
 
-        # with open('F:/homework7/problem.txt','a+',encoding='utf-8') as f:
-        # f.write('*'*50+'\n')
-        # f.write('\n')
+            with open('F:/Python/homework7/problem.txt','a+',encoding='utf-8') as f:
+                f.write(dict['title']+'\n')
+                f.write(dict['Order']+'\n')
+                f.write(dict['code']+'\n')
+                f.write('*'*100+'\n')
+                f.write('\n')
+    except Exception as ex:
+        print(ex)
 
 
 listurl1=geturl1('https://www.programcreek.com/python/?ClassName=request&submit=Search')
-li=geturl2(listurl1[0])
-getcon(li)
+for u in listurl1:
+    listurl2=geturl2(u)
+    getcon(listurl2)
